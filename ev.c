@@ -100,14 +100,15 @@ int ev_add_event(int poller_fd, int fd)
 
 /* Modify a socket's event type to poller */
 int ev_modify_event(int poller_fd, int fd, int active_type) 
-{
+{	
 	struct kevent ke;
 	EV_SET(&ke, fd, active_type, EV_ADD, 0, 0, NULL);
 	return kevent(poller_fd, &ke, 1, NULL, 0, NULL);
 }
 
 /* Delete a registered socket from poller */ 
-int ev_del_event(int poller_fd, int fd) {
+int ev_del_event(int poller_fd, int fd) 
+{
 	struct kevent ke;
 	EV_SET(&ke, fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
 	kevent(poller_fd, &ke, 1, NULL, 0, NULL);
@@ -135,8 +136,15 @@ void ev_run_loop(int poller_fd, int timeout_usec) {
 	timeout.tv_sec = 0;
 	timeout.tv_nsec = timeout_usec * THOUSAND;
 
-    while (true) {
+	while (true) {
 		nfds = kevent(poller_fd, NULL, 0, events, MAX_EVENT_NO, &timeout);
+		if (nfds < 0 ) {
+			if (errno == EINTR) {
+				continue;
+			}
+			break;	
+		}
+
 		for (int i = 0; i < nfds; i++) {
 			int ev_fd = events[i].ident;
 
