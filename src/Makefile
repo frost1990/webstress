@@ -2,7 +2,7 @@ CC = gcc
 CTAGS = ctags
 
 INCLUDES = -I/usr/local/include -I/usr/include 
-LIBS = -L/usr/local/lib  -L../lib -L/usr/local/lib 
+LIBS = -L/usr/local/lib  -L/usr/local/lib 
 CFLAGS = -g -std=gnu99 -Wall -Wno-unused-result -O2 -c $(INCLUDES) 
 OFLAGS = -g -Wall -O2 $(LIBS)
 
