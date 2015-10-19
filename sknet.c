@@ -20,7 +20,6 @@ int sk_set_rcv_timeout(int fd, int tv_sec, int tv_usec)
     struct timeval tv;
     tv.tv_sec = tv_sec;
     tv.tv_usec = tv_usec;
-
     return setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 }
 
@@ -30,8 +29,7 @@ int sk_set_snd_timeout(int fd, int tv_sec, int tv_usec)
 	struct timeval tv;
 	tv.tv_sec = tv_sec;
 	tv.tv_usec = tv_usec;
-
-    return setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
+	return setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
 }
 
 int sk_set_rcvbuffer(int fd, size_t size)
