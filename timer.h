@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 
+#define THOUSAND (1000lu) 
 #define MILLION (1000000lu) 
 #define BILLION (1000000000lu) 
 
