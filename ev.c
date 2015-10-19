@@ -1,10 +1,11 @@
-#include <errno.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <errno.h>
 
 #include "ev.h"
 #include "timer.h"
 
+/* Only support advanced I/O multiplex(i.e. epoll, kevent) now, select(2) and poll(2) are not available for the moment */
 #ifdef __linux__
 #include <sys/epoll.h>
 
