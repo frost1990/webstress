@@ -213,7 +213,6 @@ void sk_ipv4_tostr(uint32_t ip, char *ipstr, size_t ipstr_len)
 {
 	memset(ipstr, 0, ipstr_len);
 	ip = ntohl(ip);
-	int i = 0;
 	size_t offset = 0;
 	for (int i = 0; i < 4; i++) {
 		char store[128];
@@ -234,4 +233,5 @@ void sk_ipv4_tostr(uint32_t ip, char *ipstr, size_t ipstr_len)
 			offset += strlen(".");
 		}
 	}
+	return;
 }

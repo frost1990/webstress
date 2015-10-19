@@ -39,6 +39,6 @@ int sk_close(int fd);
 uint32_t sk_get_host_ipv4(char *host);
 
 /* Switch unsigned ip to dotted decimal string */
-void sk_ipv4_tostr(char *host, char *ip, size_t ip_len);
+void sk_ipv4_tostr(uint32_t ip, char *ipstr, size_t ipstr_len);
 
 #endif 

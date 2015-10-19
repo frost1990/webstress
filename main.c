@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/epoll.h>
 #include <sys/time.h>
@@ -10,7 +11,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
-#include <string>
 #include <errno.h>
 #include <signal.h>
 
@@ -30,24 +30,11 @@ char* iptostr(unsigned host_ip) {
 	return inet_ntoa(addr);
 }
 
-// 19:30:30 030 Hour Minute Second Millisecond 
-string now_str() {
-    char now_str[128];
-
-    struct timeval now = {0};
-    struct tm pnow;
-    gettimeofday(&now, NULL);
-    localtime_r(&now.tv_sec, &pnow);
-	snprintf(now_str, sizeof(now_str) - 1, "%02d:%02d:%02d %06ld", pnow.tm_hour, pnow.tm_min, pnow.tm_sec, now.tv_usec);
-
-    return string(now_str);
-}
 
 void interupt_stats(int signal) {
 	gettimeofday(&end, NULL);
 	uint32_t cost_time = (end.tv_sec - start.tv_sec) * 1000 + (end.tv_usec - start.tv_usec) / 1000;
     fprintf(stderr, "\nProcess interupted by %s, total duration:%d seconds\n", strsignal(signal), cost_time / 1000);
-	fprintf(stderr, "Benchmark ends, now %s\n", now_str().c_str());
     fprintf(stderr, "Total requests sent:%llu\n", request_seq);
     fprintf(stderr, "Total responses recieved:%llu\n", response_seq);
 	double finished = (request_seq) ? (100 * (double)response_seq / (double)request_seq) : 0.0;
@@ -70,7 +57,7 @@ void setaddrresue(int sockfd) {
 }
 
 void addfd(int epoll_fd, int fd) {
-    epoll_event event;
+    struct epoll_event event;
     event.data.fd = fd;
     event.events = EPOLLOUT | EPOLLET | EPOLLERR | EPOLLRDHUP;
     epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &event);
@@ -222,10 +209,9 @@ int main(int argc, char* argv[]) {
 	signal(SIGINT, interupt_stats);
 	int epoll_fd = epoll_create(100);
 	
-	fprintf(stderr, "Benchmark starts, now %s\n", now_str().c_str());
 	start_conn(epoll_fd, atoi(argv[3]), argv[1], atoi(argv[2]));
 	printf("Request content:\n%s\n", request);
-	epoll_event events[10000];
+	struct epoll_event events[10000];
 	char *buffer = (char *) malloc(RECV_BUFFER_SIZE * sizeof (char));
 	while (true) {
 		int fds = epoll_wait(epoll_fd, events, 10000, 2000);

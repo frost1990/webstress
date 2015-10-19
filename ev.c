@@ -1,5 +1,5 @@
-#include  <errno.h>
-#include  <stdio.h>
+#include <errno.h>
+#include <stdio.h>
 #ifdef __linux__
 	#include <sys/epoll.h>
 #else 
@@ -22,7 +22,7 @@ int ev_create(void)
 /* Register a new socket's readable event to poller, edge_trigger */
 int ev_add_event(int poller_fd, int fd) 
 {
-	epoll_event event;
+	struct epoll_event event;
 	event.data.fd = fd;
 	event.events = EPOLLIN | EPOLLET | EPOLLRDHUP; 
 	return epoll_ctl(poller_fd, EPOLL_CTL_ADD, fd, &event);
@@ -31,7 +31,7 @@ int ev_add_event(int poller_fd, int fd)
 /* Modify a socket's event type to poller */
 int ev_modify_event(int poller_fd, int fd, int active_type) 
 {
-	epoll_event event;
+	struct epoll_event event;
 	event.data.fd = fd;
 	if (active_type == EPOLLIN) {
 		event.events = EPOLLIN | EPOLLET | EPOLLRDHUP; 
@@ -52,7 +52,7 @@ int ev_add_timer(int poller_fd, int timerfd, int sec, int msec, bool once_only,
 {
 	timer_set_interval(timerfd, sec, msec, once_only);
 
-	epoll_event event;
+	struct epoll_event event;
 	event.data.fd = timerfd;
 	event.events = EPOLLIN | EPOLLET; 
 
@@ -65,7 +65,7 @@ int ev_del_timer(int poller_fd, int timerfd) {
 
 /* Start a event loop */
 void ev_run_loop(int poller_fd, int timeout_usec) {
-	epoll_event events[MAX_EVENT_NO];
+	struct epoll_event events[MAX_EVENT_NO];
 	while (true) {
 		int number = epoll_wait(poller_fd, events, MAX_EVENT_NO, timeout_usec); 
 		if (number < 0 ) {
