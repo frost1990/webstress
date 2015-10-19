@@ -6,6 +6,10 @@
 
 #include "timer.h"
 
+int timer_create_fd(void) {
+	return timerfd_create(CLOCK_REALTIME, TFD_NONBLOCK | TFD_CLOEXEC);
+}
+
 /* Enable the timer and set interval, timer will first run after it's specified interval */
 int timer_set_interval(int fd, int sec, int msec, bool once_run) {
 	struct itimerspec new_time; 		

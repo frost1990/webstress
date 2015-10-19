@@ -208,7 +208,7 @@ uint32_t sk_get_host_ipv4(char *host)
 	return ip;
 }
 
-/* Get switch unsigned ip to dotted decimal string */
+/* Switch unsigned ip to dotted decimal string */
 void sk_ipv4_tostr(uint32_t ip, char *ipstr, size_t ipstr_len) 
 {
 	memset(ipstr, 0, ipstr_len);

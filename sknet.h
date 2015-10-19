@@ -38,7 +38,7 @@ int sk_close(int fd);
 /* Get hosts or dns query */
 uint32_t sk_get_host_ipv4(char *host);
 
-/* Get switch unsigned ip to dotted decimal string */
+/* Switch unsigned ip to dotted decimal string */
 void sk_ipv4_tostr(char *host, char *ip, size_t ip_len);
 
 #endif 
