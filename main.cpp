@@ -24,7 +24,7 @@ struct timeval start;
 struct timeval end;
 
 const char *request = "GET /hello?body={\"to\":\"http://baidu.com\",\"action\":\"to\"} HTTP/1.1\r\n"
-					  "Connection: keep-alive\r\n"
+					  "Connection: keep-alive\r\n";
 // Ip to dotted decimal string
 char* iptostr(unsigned host_ip) {
 	struct in_addr  addr;
@@ -48,12 +48,12 @@ string now_str() {
 void ctrl_c_stats(int signal) {
 	gettimeofday(&end, NULL);
 	uint32_t cost_time = (end.tv_sec - start.tv_sec) * 1000 + (end.tv_usec - start.tv_usec) / 1000;
-    fprintf(stderr, "\nProcess interupted by %s, duration: %d seconds\n", strsignal(signal), cost_time / 1000);
+    fprintf(stderr, "\nProcess interupted by %s, total duration:%d seconds\n", strsignal(signal), cost_time / 1000);
 	fprintf(stderr, "Benchmark ends, now %s\n", now_str().c_str());
-    fprintf(stderr, "Total requests sent:%lu\n", request_seq);
-    fprintf(stderr, "Total responses recieved:%lu\n", response_seq);
-	double finished = (request_seq) ? ((double)response_seq / (double)request_seq) : 0;
-    fprintf(stderr, "Finished tasks percent %f\%\n", 100 * finished);
+    fprintf(stderr, "Total requests sent:%llu\n", request_seq);
+    fprintf(stderr, "Total responses recieved:%llu\n", response_seq);
+	double finished = (request_seq) ? (100 * (double)response_seq / (double)request_seq) : 0.0;
+    fprintf(stderr, "Finished tasks percent %f%%\n", finished);
     exit(EXIT_FAILURE);
 }
 
