@@ -28,8 +28,8 @@ int sk_set_rcv_timeout(int fd, int tv_sec, int tv_usec)
 int sk_set_snd_timeout(int fd, int tv_sec, int tv_usec)
 {
 	struct timeval tv;
-    tv.tv_sec = tv_sec;
-    tv.tv_usec = tv_usec;
+	tv.tv_sec = tv_sec;
+	tv.tv_usec = tv_usec;
 
     return setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
 }
