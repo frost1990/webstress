@@ -1,10 +1,10 @@
 #include <unistd.h>
 #include <stdio.h>
-#include <sys/timerfd.h>
-#include <time.h>
 #include <stdint.h>
-
 #include "timer.h"
+
+#ifdef __linux__
+#include <sys/timerfd.h>
 
 int timer_create_fd(void) 
 {
@@ -52,3 +52,5 @@ int timer_close(int fd)
 {
 	return close(fd);
 }
+
+#endif
