@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h> /* TCP_NODELAY */
@@ -13,22 +14,24 @@
 
 #include "sknet.h"
 
+/* Only works in block mode */
 int sk_set_rcv_timeout(int fd, int tv_sec, int tv_usec)
 {
     struct timeval tv;
     tv.tv_sec = tv_sec;
     tv.tv_usec = tv_usec;
 
-    return setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv))
+    return setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 }
 
+/* Only works in block mode */
 int sk_set_snd_timeout(int fd, int tv_sec, int tv_usec)
 {
 	struct timeval tv;
     tv.tv_sec = tv_sec;
     tv.tv_usec = tv_usec;
 
-    return setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv))
+    return setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
 }
 
 int sk_set_rcvbuffer(int fd, size_t size)
@@ -146,6 +149,15 @@ int sk_set_nonblock(int fd)
 	return 0;
 }
 
+/* Set block I/O */
+int sk_set_block(int fd)
+{
+	if (fcntl(fd, F_SETFL, ~O_NONBLOCK & fcntl(fd, F_GETFL)) != 0) {
+		return SK_ERR;
+	}
+	return 0;
+}
+
 /* Turn off Nagle's algorithm */
 int sk_tcp_no_delay(int fd)
 {	
@@ -176,17 +188,50 @@ int sk_tcp_keepalive(int fd)
 	return 0;
 }
 
-/* Get /etc/hosts or dns query */
+int sk_close(int fd) 
+{
+	return close(fd);
+}
+
+/* Get hosts or dns query */
 uint32_t sk_get_host_ipv4(char *host)
 {
 	uint32_t ip = 0;
 	struct hostent *hosts;
-	hosts = gethostbyname_r(host);
+	hosts = gethostbyname(host);
 
-	if (host->h_addrtype == AF_INET) {
+	if (hosts->h_addrtype == AF_INET) {
 		if (hosts->h_addr_list[0]) {
-			ip = ntohl(*(struct in_addr *)hosts->h_addr_list[0].s_addr);
+			ip = ntohl((*(struct in_addr *)hosts->h_addr_list[0]).s_addr);
 		}
 	}
 	return ip;
+}
+
+/* Get switch unsigned ip to dotted decimal string */
+void sk_ipv4_tostr(uint32_t ip, char *ipstr, size_t ipstr_len) 
+{
+	memset(ipstr, 0, ipstr_len);
+	ip = ntohl(ip);
+	int i = 0;
+	size_t offset = 0;
+	for (int i = 0; i < 4; i++) {
+		char store[128];
+		uint8_t segement = ip >> (8 * i);
+		snprintf(store, sizeof(store) - 1, "%u", segement);
+		size_t step = strlen(store);
+		if (offset + step > ipstr_len - 1 ) {
+			return;
+		}
+		offset += step;
+		strncat(ipstr, store, step);
+		if (i != 3) {
+			size_t step_dot = strlen(".");
+			if (offset + step_dot > ipstr_len - 1 ) {
+				return;
+			}
+			strncat(ipstr, ".", step_dot);
+			offset += strlen(".");
+		}
+	}
 }

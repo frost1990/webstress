@@ -4,10 +4,10 @@
 #define SK_OK 0
 #define SK_ERR -1
 
-/* Only used in block mode */
-int sk_set_rcv_timeout(int fd, int tv_sec, int tv_usec)
-/* Only used in block mode */
-int sk_set_snd_timeout(int fd, int tv_sec, int tv_usec)
+/* Only works in block mode */
+int sk_set_rcv_timeout(int fd, int tv_sec, int tv_usec);
+/* Only works in block mode */
+int sk_set_snd_timeout(int fd, int tv_sec, int tv_usec);
 
 int sk_set_rcv_buffer(size_t size, int fd);
 int sk_set_snd_buffer(size_t size, int fd);
@@ -22,7 +22,10 @@ int sk_getsockname(int fd, char *ip, size_t ip_len, int *port);
 int sk_getpeername(int fd, char *ip, size_t ip_len, int *port);
 
 /* Set nonblock I/O */
-int sk_set_nonblocking(int fd);
+int sk_set_nonblock(int fd);
+/* Set block I/O */
+int sk_set_block(int fd);
+
 /* Turn off Nagle's algorithm */
 int sk_tcp_no_delay(int fd);
 /* Address reuse */ 
@@ -30,7 +33,12 @@ int sk_resue_addr(int fd);
 /* Enable TCP Keep-Alive */
 int sk_tcp_keepalive(int fd);
 
-/* Get /etc/hosts or dns query */
-uint32_t sk_get_host_ipv4(char *host)
+int sk_close(int fd);
+
+/* Get hosts or dns query */
+uint32_t sk_get_host_ipv4(char *host);
+
+/* Get switch unsigned ip to dotted decimal string */
+void sk_ipv4_tostr(char *host, char *ip, size_t ip_len);
 
 #endif 
