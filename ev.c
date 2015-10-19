@@ -13,6 +13,7 @@
 #include "ev.h"
 #include "timer.h"
 
+#ifdef __linux__
 /* Create kernel event table */
 int ev_create(void)
 {
@@ -83,3 +84,4 @@ void ev_run_loop(int poller_fd, int timeout_usec) {
 	}
 	return;
 }
+#endif
