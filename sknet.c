@@ -17,10 +17,10 @@
 /* Only works in block mode */
 int sk_set_rcv_timeout(int fd, int tv_sec, int tv_usec)
 {
-    struct timeval tv;
-    tv.tv_sec = tv_sec;
-    tv.tv_usec = tv_usec;
-    return setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+	struct timeval tv;
+	tv.tv_sec = tv_sec;
+	tv.tv_usec = tv_usec;
+	return setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 }
 
 /* Only works in block mode */
