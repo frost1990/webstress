@@ -36,7 +36,6 @@ int parse_opt(int argc, char **argv)
 				break;
 			case '?':
 				error = (char)optopt;
-				fprintf(stderr, "Invalid input option -%c\n", error);
 				break;
 			case ':':
 				break;

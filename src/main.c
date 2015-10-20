@@ -10,7 +10,7 @@ struct timeval end;
 
 int main(int argc, char* argv[]) 
 {
-	printf("This product is under development for the momment, please wait for a while.\nThank you for your support!\n");
+	printf("This product is under development for the moment, please wait for a while.\nThank you for your support!\n");
 
 	parse_opt(argc, argv);
 	
