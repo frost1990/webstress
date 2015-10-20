@@ -9,7 +9,10 @@ struct config request;
 
 int parse_opt(int argc, char **argv) 
 {
-	if (argc == 1)  help();
+	if (argc == 1) {  
+		help();
+		return 0;
+	}
 
 	request.basic_url = argv[argc - 1];
 	int ch;                     
@@ -19,10 +22,6 @@ int parse_opt(int argc, char **argv)
 	while ((ch = getopt(argc, argv, "c:H:hv")) != -1) {
 		switch(ch) {
 			case 'c':
-				if (optarg == NULL) {
-					fprintf(stderr, "Please input concurrent connections number after -c option\n");
-					break;
-				}
 				request.connections = atoi(optarg);
 				break;
 			case 'H':
@@ -35,7 +34,6 @@ int parse_opt(int argc, char **argv)
 				show_version();
 				break;
 			case '?':
-				error = (char)optopt;
 				break;
 			case ':':
 				break;
