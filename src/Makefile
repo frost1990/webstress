@@ -3,7 +3,9 @@ CTAGS = ctags
 
 INCLUDES = -I/usr/local/include -I/usr/include 
 LIBS = -L/usr/local/lib  -L/usr/local/lib 
-LINK = -lrt 
+ifeq ($(uname_S), Linux)
+	LINK = -lrt 
+endif
 CFLAGS = -g -std=gnu99 -Wall -Wno-unused-result -O2 -c $(INCLUDES) 
 OFLAGS = -g -Wall -O2 $(LIBS) $(LINK)
 
