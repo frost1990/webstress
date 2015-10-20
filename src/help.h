@@ -8,7 +8,7 @@ const char *help_message =
 "\nUSAGE: webpress [options] <url>\n"
 "\nOPTIONS:\n"
 	"-h						Print help message\n"
-	"-v						Show version infomation\n"	 
+	"-v						Show version information\n"	 
 	"-H						Add additional http request header\n"
 	"-c						Concurrent tcp connections\n";
 
