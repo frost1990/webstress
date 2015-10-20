@@ -1,13 +1,14 @@
+uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
 CC = gcc
 CTAGS = ctags
 
 INCLUDES = -I/usr/local/include -I/usr/include 
 LIBS = -L/usr/local/lib  -L/usr/local/lib 
-ifeq ($(uname_S), Linux)
+ifeq ($(uname_S),Linux)
 	LINK = -lrt 
 endif
-CFLAGS = -g -std=gnu99 -Wall -Wno-unused-result -O2 -c $(INCLUDES) 
-OFLAGS = -g -Wall -O2 $(LIBS) $(LINK)
+CFLAGS = -g -std=gnu99 -Wall -fno-strict-aliasing -O2 -c $(INCLUDES) 
+OFLAGS = $(LIBS) $(LINK)
 
 SRCDIR = .
 SRCS = $(wildcard $(SRCDIR)/*.cc $(SRCDIR)/*.c)
