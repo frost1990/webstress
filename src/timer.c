@@ -40,7 +40,6 @@ int timer_set_interval(int fd, int sec, int msec, bool once_run)
 	return timerfd_settime(fd, TFD_TIMER_ABSTIME, &new_time, NULL);
 }
 
-
 /* Turn off the timer (may be temporarily) */
 int timer_disarm(int fd) 
 {
