@@ -1,6 +1,9 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <time.h>
+#include <sys/time.h>
+
 #include "timer.h"
 
 #ifdef __linux__
