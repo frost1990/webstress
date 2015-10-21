@@ -25,6 +25,8 @@ int sk_getpeername(int fd, char *ip, size_t ip_len, int *port);
 int sk_set_nonblock(int fd);
 /* Set block I/O */
 int sk_set_block(int fd);
+/* Async connect */
+int sk_async_connect(int poller_fd, int fd, const char *ip, int port);
 
 /* Turn off Nagle's algorithm */
 int sk_tcp_no_delay(int fd);

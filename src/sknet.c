@@ -168,6 +168,29 @@ int sk_set_block(int fd)
 	return 0;
 }
 
+/* Async connect */
+int sk_async_connect(int poller_fd, int fd, const char *ip, int port)
+{
+	struct sockaddr_in address; 
+	bzero(&address, sizeof(address));
+	address.sin_family = AF_INET;
+
+	inet_pton(AF_INET, ip, &address.sin_addr);
+	address.sin_port = htons(port);
+
+	int ret = connect(fd, (struct sockaddr *) &address, sizeof(address));
+	if (ret == 0) {
+		return ret;
+	} else if (errno != EINPROGRESS) { 
+		return -1;  
+	} else {
+		struct epoll_event event;
+		event.data.fd = fd; 
+		event.events = EPOLLOUT | EPOLLET; 
+		return epoll_ctl(poller_fd, EPOLL_CTL_ADD, fd, &event);
+	}   
+}
+
 /* Turn off Nagle's algorithm */
 int sk_tcp_no_delay(int fd)
 {	
