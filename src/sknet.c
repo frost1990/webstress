@@ -5,6 +5,7 @@
 #include <netinet/tcp.h> /* TCP_NODELAY */
 #include <arpa/inet.h>
 #include <sys/time.h>
+#include <sys/epoll.h>
 #include <fcntl.h> 
 #include <netdb.h> 
 #include <time.h>
