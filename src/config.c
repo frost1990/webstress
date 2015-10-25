@@ -26,7 +26,9 @@ int parse_opt(int argc, char **argv, config *request)
   	struct http_parser_url us;
 	char *src_url = argv[argc - 1];
   	
-	parse_url(src_url, &us, request);
+	if (parse_url(src_url, &us, request) != 0) {
+		exit(EXIT_FAILURE);
+	}
 
 	uint32_t ip = sk_get_host_ipv4(request->host); 
 	if (ip == 0) {
