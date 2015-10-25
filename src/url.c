@@ -5,8 +5,11 @@
 #include "url.h"
 #include "regex_util.h"
 
-int parse_url(const char *url, struct http_parser_url *u, config *request)
+int parse_url(const char *url, struct http_parser_url *u, http_request *request)
 {
+	if (url == NULL) {
+		return -1;
+	}
 	char real_url[1024] = {0};
 	if ((is_match_pattern(url, "^[a-zA-Z][0-9a-zA-Z\\.-]*:\\/\\/.*")) != 0)  {
 		snprintf(real_url, 1024, "http://%s", url);
@@ -22,34 +25,30 @@ int parse_url(const char *url, struct http_parser_url *u, config *request)
 		return -1;
 	}
 
-	printf("\tfield_set: 0x%x, port: %u\n", u->field_set, u->port);
 	char strport[64] = {0};
 	for (unsigned i = 0; i < UF_MAX; i++) {
 		if ((u->field_set & (1 << i)) == 0) {
-			printf("\tfield_data[%u]: unset\n", i);
 			continue;
 		}
-		printf("\tfield_data[%u]: off: %u, len: %u, part: %.*s\n", i, u->field_data[i].off, u->field_data[i].len, u->field_data[i].len,
-			real_url + u->field_data[i].off);
 		switch (i) {
 			case 0:
-				snprintf(request->scheme, 16, "%s", real_url + u->field_data[i].off);
+				snprintf(request->scheme, 16, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				break;
 			case 1:
-				snprintf(request->host, 256, "%s", real_url + u->field_data[i].off);
+				snprintf(request->host, 256, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				break;
 			case 2:
-				snprintf(strport, 64, "%s", real_url + u->field_data[i].off);
+				snprintf(strport, 64, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				request->port = atoi(strport);
 				break;
 			case 3:
-				snprintf(request->path, 256, "%s", real_url + u->field_data[i].off);
+				snprintf(request->path, 256, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				break;
 			case 4:
-				snprintf(request->querystring, 1024, "%s", real_url + u->field_data[i].off);
+				snprintf(request->querystring, 1024, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				break;
 			case 5:
-				snprintf(request->fragment, 256, "%s", real_url + u->field_data[i].off);
+				snprintf(request->fragment, 256, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				break;
 			default:
 				break;
