@@ -5,7 +5,13 @@
 #include <netinet/tcp.h> /* TCP_NODELAY */
 #include <arpa/inet.h>
 #include <sys/time.h>
-#include <sys/epoll.h>
+#ifdef __linux__
+	#include <sys/epoll.h>
+#else
+	#if (defined(__APPLE__)) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined (__NetBSD__)
+		#include <sys/event.h>
+	#endif
+#endif
 #include <fcntl.h> 
 #include <netdb.h> 
 #include <time.h>
@@ -170,6 +176,7 @@ int sk_set_block(int fd)
 }
 
 /* Async connect */
+
 int sk_async_connect(int poller_fd, int fd, const char *ip, int port)
 {
 	struct sockaddr_in address; 
@@ -185,10 +192,18 @@ int sk_async_connect(int poller_fd, int fd, const char *ip, int port)
 	} else if (errno != EINPROGRESS) { 
 		return -1;  
 	} else {
+#ifdef __linux__
 		struct epoll_event event;
 		event.data.fd = fd; 
 		event.events = EPOLLOUT | EPOLLET; 
 		return epoll_ctl(poller_fd, EPOLL_CTL_ADD, fd, &event);
+#else
+	#if (defined(__APPLE__)) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined (__NetBSD__)
+		struct kevent ke;
+		EV_SET(&ke, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+		return kevent(poller_fd, &ke, 1, NULL, 0, NULL);
+	#endif
+#endif
 	}   
 }
 
