@@ -4,9 +4,11 @@
 #include <arpa/inet.h>
 
 #include "config.h"
+#include "http_parser.h"
 #include "sknet.h"
 #include "help.h"
 #include "version.h"
+#include "url.h"
 
 char* iptostr(unsigned host_ip) {
     struct in_addr  addr;
@@ -21,8 +23,12 @@ int parse_opt(int argc, char **argv, config *request)
 		return 0;
 	}
 
-	request->basic_url = argv[argc - 1];
-	uint32_t ip = sk_get_host_ipv4(request->basic_url); 
+  	struct http_parser_url us;
+	char *src_url = argv[argc - 1];
+  	
+	parse_url(src_url, &us, request);
+
+	uint32_t ip = sk_get_host_ipv4(request->host); 
 	if (ip == 0) {
 		printf("DNS query error\n");
 	}
@@ -33,9 +39,6 @@ int parse_opt(int argc, char **argv, config *request)
 	sk_ipv4_tostr(request->ip, ipstr, strlen(ipstr));
 	printf("Get IP %s after DNS query\n", ipstr);
 	int ch;                     
-	char error;
-	char *b_opt_arg;            
-
 	while ((ch = getopt(argc, argv, "c:H:hv")) != -1) {
 		switch(ch) {
 			case 'c':
