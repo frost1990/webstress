@@ -10,6 +10,7 @@
 #include "version.h"
 #include "regex_util.h"
 #include "url.h"
+#include "screen.h"
 
 /* The array must be correctly ordered */
 static struct method_map method_name_map [] = {
@@ -50,6 +51,55 @@ void init_http_request(http_request *request)
 	memset(request->bodydata, 0, 1024);
 }
 
+void parse_cli(int argc, char **argv, http_request *request) {
+	int ch;                     
+	while ((ch = getopt(argc, argv, "c:d:H:hm:t:v")) != -1) {
+		switch(ch) {
+			case 'c':
+				if (atoi(optarg) < 1) {
+					printf("Connection number must be equal to or greater than one.\n");
+					exit(EXIT_FAILURE);	
+				}
+				request->connections = atoi(optarg);
+				break;
+			case 'd':
+				request->method= POST; 
+				strncpy(request->bodydata, optarg, 1024);
+				break;
+			case 'H':
+				request->additional_header = optarg;
+				break;
+			case 'h':
+				help();
+				break;
+			case 'm':
+				if (atoi(optarg) < 1) {
+					printf("Duration time must be equal to or greater than one minute.\n");
+					exit(EXIT_FAILURE);	
+				}
+				request->duration = 60 * atoi(optarg);
+				break;
+			case 't':
+				if (atoi(optarg) < 1) {
+					printf("Request-response time out must be equal to or greater than one millisecond.\n");
+					exit(EXIT_FAILURE);	
+				}
+				request->timeout = atoi(optarg);
+				break;
+			case 'v':
+				show_version();
+				break;
+			case '?':
+				exit(EXIT_FAILURE);
+				break;
+			case ':':
+				break;
+			default:	
+				break;
+		}
+	}
+}
+
 int parse_opt(int argc, char **argv, http_request *request) 
 {
 	if (argc == 1) {  
@@ -57,8 +107,20 @@ int parse_opt(int argc, char **argv, http_request *request)
 		return 0;
 	}
 
-  	struct http_parser_url us;
-	char *src_url = argv[argc - 1];
+	parse_cli(argc, argv, request);
+
+	char *src_url = argv[optind];
+	/* In this case, the first argument is the request url, just like: ./webpress google.com -c 100 */
+	if (optind == 1) {
+		parse_cli(argc - 1, argv + 1, request);
+	}
+
+	if (optind == argc) {
+		SCREEN_PRINT(SCREEN_RED, stderr, "Please input your request url.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	struct http_parser_url us;
   	
 	if (parse_url(src_url, &us, request) != 0) {
 		exit(EXIT_FAILURE);
@@ -74,38 +136,7 @@ int parse_opt(int argc, char **argv, http_request *request)
 	}
 	printf("Host: %s, ip: %s\n", request->host, ipstr);
 	request->port = PORT_HTTP; 
-	request->method = GET; 
-
-	int ch;                     
-	while ((ch = getopt(argc, argv, "c:d:H:hm:t:v")) != -1) {
-		switch(ch) {
-			case 'c':
-				request->connections = atoi(optarg);
-				break;
-			case 'd':
-				request->method= POST; 
-				strncpy(request->bodydata, optarg, 1024);
-				break;
-			case 'H':
-				request->additional_header = optarg;
-				break;
-			case 'h':
-				help();
-				break;
-			case 'm':
-				request->duration = 60 * atoi(optarg);
-				break;
-			case 'v':
-				show_version();
-				break;
-			case '?':
-				break;
-			case ':':
-				break;
-			default:	
-				break;
-		}
-	}
+	request->method = GET;
 
 	return 0;
 }

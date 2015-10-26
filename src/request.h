@@ -50,6 +50,8 @@ void init_http_request(http_request *request);
 
 const char *get_method_name(http_request_method_t method); 
 
+void parse_cli(int argc, char **argv, http_request *request);
+
 int parse_opt(int argc, char **argv, http_request *request);
 
 char *compose_request_buffer(const http_request* request);
