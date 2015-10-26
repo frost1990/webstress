@@ -176,7 +176,6 @@ int sk_set_block(int fd)
 }
 
 /* Async connect */
-
 int sk_async_connect(int poller_fd, int fd, const char *ip, int port)
 {
 	struct sockaddr_in address; 
@@ -283,4 +282,10 @@ void sk_ipv4_tostr(uint32_t ip, char *ipstr, size_t ipstr_len)
 		}
 	}
 	return;
+}
+
+/* Switch dotted decimal string to unsigned int */
+uint32_t sk_str_to_ipv4(const char *ipstr)
+{
+	return ntohl(inet_addr(ipstr));
 }

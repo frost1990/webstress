@@ -8,6 +8,7 @@
 #include "sknet.h"
 #include "help.h"
 #include "version.h"
+#include "regex_util.h"
 #include "url.h"
 
 /* The array must be correctly ordered */
@@ -61,18 +62,21 @@ int parse_opt(int argc, char **argv, http_request *request)
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Query dns %s\n", request->host);
-	uint32_t ip = sk_get_host_ipv4(request->host); 
-	if (ip == 0) {
-		printf("DNS query error\n");
+	/* Check whether the host field is a direct ipv4 address */
+	if (is_match_pattern(request->host, REGEX_IPV4) == 0 ) {
+		request->ip = sk_str_to_ipv4(request->host); 
+	} else { 
+		request->ip = sk_get_host_ipv4(request->host); 
+		char ipstr[64] = {0};
+		sk_ipv4_tostr(request->ip, ipstr, strlen(ipstr));
+		printf("Get IP %s after DNS query: %s\n", ipstr, request->host);
 	}
-	request->ip = ip; 
+	if (request->ip == 0) {
+		printf("Host %s, no ipv4 address found\n", request->host);
+	}
+	request->port = PORT_HTTP; 
 	request->method = GET; 
 
-	request->port = PORT_HTTP; 
-	char ipstr[64] = {0};
-	sk_ipv4_tostr(request->ip, ipstr, strlen(ipstr));
-	printf("Get IP %s after DNS query\n", ipstr);
 	int ch;                     
 	while ((ch = getopt(argc, argv, "c:H:hm:v")) != -1) {
 		switch(ch) {
@@ -94,6 +98,8 @@ int parse_opt(int argc, char **argv, http_request *request)
 			case '?':
 				break;
 			case ':':
+				break;
+			default:	
 				break;
 		}
 	}

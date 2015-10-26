@@ -11,7 +11,7 @@ int parse_url(const char *url, struct http_parser_url *u, http_request *request)
 		return -1;
 	}
 	char real_url[1024] = {0};
-	if ((is_match_pattern(url, "^[a-zA-Z][0-9a-zA-Z\\.-]*:\\/\\/.*")) != 0)  {
+	if ((is_match_pattern(url, REGEX_URL_SCHEME)) != 0)  {
 		snprintf(real_url, 1024, "http://%s", url);
 	} else {
 		snprintf(real_url, 1024, "%s", url);

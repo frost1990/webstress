@@ -7,11 +7,11 @@
 const char *help_message = 
 "\nUSAGE: webpress [options] <url>\n"
 "\nOPTIONS:\n"
-	"-h						Print help message\n"
-	"-v						Show version information\n"	 
-	"-H						Add additional http request header\n"
 	"-c						Concurrent tcp connections\n"
-	"-m						Benchmark duration time in minutes\n";
+	"-h						Print help message\n"
+	"-H						Add additional http request header\n"
+	"-m						Benchmark duration time in minutes\n"
+	"-v						Show version information\n";	 
 
 void help(void) 
 {
