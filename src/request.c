@@ -144,7 +144,6 @@ char *compose_request_buffer(const http_request* request)
 	offset += bytes;
 	/* Request line ends here */
 
-	/* Header ends here */
 	if (request->http_keep_alive == HTTP_KEEP_ALIVE) {
 		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Connection: keep-alive\r\n");
 		offset += bytes;
@@ -153,32 +152,13 @@ char *compose_request_buffer(const http_request* request)
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s\r\n", request->additional_header);
 	offset += bytes;
 
+	/* Header ends here */
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
 	offset += bytes;
 
 	/* Body starts */
 	if (strlen(request->bodydata) > 0) {
-		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "", request->bodydata);
-		offset += bytes;
-	}
-
-	return buffer;
-}
-
-void free_request_buffer(char *buffer) 
-{
-	free(buffer);
-	return;
-}
-	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s\r\n", request->additional_header);
-	offset += bytes;
-
-	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
-	offset += bytes;
-
-	/* Body starts */
-	if (strlen(request->bodydata) > 0) {
-		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "", request->bodydata);
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s", request->bodydata);
 		offset += bytes;
 	}
 
