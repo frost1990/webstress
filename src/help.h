@@ -8,6 +8,7 @@ const char *help_message =
 "\nUSAGE: webpress [options] <url>\n"
 "\nOPTIONS:\n"
 "	-c						Concurrent tcp connections\n"
+"	-d						Add post form data\n"
 "	-h						Print help message\n"
 "	-H						Add additional http request header\n"
 "	-m						Benchmark duration time in minutes\n"

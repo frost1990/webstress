@@ -76,7 +76,7 @@ int parse_opt(int argc, char **argv, http_request *request)
 	request->method = GET; 
 
 	int ch;                     
-	while ((ch = getopt(argc, argv, "c:H:hm:v")) != -1) {
+	while ((ch = getopt(argc, argv, "c:d:H:hm:t:v")) != -1) {
 		switch(ch) {
 			case 'c':
 				request->connections = atoi(optarg);
