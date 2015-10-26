@@ -247,6 +247,9 @@ uint32_t sk_get_host_ipv4(char *host)
 	uint32_t ip = 0;
 	struct hostent *hosts;
 	hosts = gethostbyname(host);
+	if (hosts == NULL) {
+		return ip;
+	}
 
 	if (hosts->h_addrtype == AF_INET) {
 		if (hosts->h_addr_list[0]) {
