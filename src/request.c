@@ -72,7 +72,7 @@ int parse_opt(int argc, char **argv, http_request *request)
 		printf("Get IP %s after DNS query: %s\n", ipstr, request->host);
 	}
 	if (request->ip == 0) {
-		printf("Host %s, no ipv4 address found\n", request->host);
+		printf("Could not resolve host: %s\n", request->host);
 	}
 	request->port = PORT_HTTP; 
 	request->method = GET; 
