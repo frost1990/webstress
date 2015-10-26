@@ -1,6 +1,8 @@
 #ifndef _REQUEST_
 #define _REQUEST_
 
+#include <stdint.h>
+
 #define HTTP_1_1 "HTTP/1.1"
 
 #define PORT_HTTP 	80

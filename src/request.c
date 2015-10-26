@@ -23,7 +23,7 @@ static struct method_map method_name_map [] = {
 
 const char *get_method_name(http_request_method_t method) 
 {
-	for (int i = GET; i <= DELETE; i++) {
+	for (int i = GET; i <= DELETE - GET + 1; i++) {
 		if (method == method_name_map[i].method) {
 			return method_name_map[i].name;
 		}
