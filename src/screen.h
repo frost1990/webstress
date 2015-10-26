@@ -6,7 +6,7 @@
 
 /* Font color */
 #define SCREEN_BLACK 			"30m"
-#define SCREEN_RED 				"31m"
+#define SCREEN_RED				"31m"
 #define SCREEN_GREEN 			"32m"
 #define SCREEN_YELLOW 			"33m"
 #define SCREEN_BLUE 			"34m"
