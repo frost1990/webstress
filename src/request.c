@@ -37,6 +37,7 @@ void init_http_request(http_request *request)
 	request->method = GET;
 	request->connections = 1;
 	request->duration = 0;
+	request->timeout = 0;
 	request->http_keep_alive = HTTP_KEEP_ALIVE;
 	request->ip = 0;
 	request->port = PORT_HTTP;

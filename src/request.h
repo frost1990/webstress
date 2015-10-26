@@ -23,16 +23,18 @@ typedef enum {
 	DELETE,
 } http_request_method_t;
 
-typedef struct method_map{
+typedef struct method_map {
 	http_request_method_t method;
 	const char *name;
 } method_map;
 
-typedef struct http_request{
+typedef struct http_request {
 	http_request_method_t method;
 	int http_keep_alive;
 	int connections;
 	int duration;
+	/* Unit millisecond */
+	int timeout;
 	uint32_t ip;
 	uint32_t port;
 	char *additional_header;

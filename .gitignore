@@ -26,4 +26,5 @@
 *.exe
 *.out
 *.app
+*.tags
 webstress
