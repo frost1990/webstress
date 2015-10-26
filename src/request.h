@@ -43,6 +43,7 @@ typedef struct http_request {
 	char path[256];
 	char querystring[1024];
 	char fragment[256];
+	char bodydata[1024];
 } http_request;
 
 void init_http_request(http_request *request);
