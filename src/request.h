@@ -32,6 +32,7 @@ typedef struct http_request{
 	http_request_method_t method;
 	int http_keep_alive;
 	int connections;
+	int duration;
 	uint32_t ip;
 	uint32_t port;
 	char *additional_header;

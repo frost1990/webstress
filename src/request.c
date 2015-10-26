@@ -35,6 +35,7 @@ void init_http_request(http_request *request)
 {
 	request->method = GET;
 	request->connections = 1;
+	request->duration = 0;
 	request->http_keep_alive = HTTP_KEEP_ALIVE;
 	request->ip = 0;
 	request->port = PORT_HTTP;
@@ -60,7 +61,7 @@ int parse_opt(int argc, char **argv, http_request *request)
 		exit(EXIT_FAILURE);
 	}
 
-	printf("Qurey dns %s\n", request->host);
+	printf("Query dns %s\n", request->host);
 	uint32_t ip = sk_get_host_ipv4(request->host); 
 	if (ip == 0) {
 		printf("DNS query error\n");
@@ -73,7 +74,7 @@ int parse_opt(int argc, char **argv, http_request *request)
 	sk_ipv4_tostr(request->ip, ipstr, strlen(ipstr));
 	printf("Get IP %s after DNS query\n", ipstr);
 	int ch;                     
-	while ((ch = getopt(argc, argv, "c:H:hv")) != -1) {
+	while ((ch = getopt(argc, argv, "c:H:hm:v")) != -1) {
 		switch(ch) {
 			case 'c':
 				request->connections = atoi(optarg);
@@ -83,6 +84,9 @@ int parse_opt(int argc, char **argv, http_request *request)
 				break;
 			case 'h':
 				help();
+				break;
+			case 'm':
+				request->duration = 60 * atoi(optarg);
 				break;
 			case 'v':
 				show_version();

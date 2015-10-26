@@ -10,7 +10,8 @@ const char *help_message =
 	"-h						Print help message\n"
 	"-v						Show version information\n"	 
 	"-H						Add additional http request header\n"
-	"-c						Concurrent tcp connections\n";
+	"-c						Concurrent tcp connections\n"
+	"-m						Benchmark duration time in minutes\n";
 
 void help(void) 
 {
