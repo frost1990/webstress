@@ -52,7 +52,7 @@ int sk_set_sndbuffer(int fd, size_t size)
 int sk_get_rcvbuffer(int fd) 
 {
 	int size;
-	int	len = sizeof(size);
+	int len = sizeof(size);
 	int ret = getsockopt(fd, SOL_SOCKET, SO_RCVBUF, &size, (socklen_t*) &len);
 	if (ret < 0) {
 		return SK_ERR;
@@ -63,7 +63,7 @@ int sk_get_rcvbuffer(int fd)
 int sk_get_sndbuffer(int fd) 
 {
 	int size;
-	int	len = sizeof(size);
+	int len = sizeof(size);
 	int ret = getsockopt(fd, SOL_SOCKET, SO_SNDBUF, &size, (socklen_t*) &len);
 	if (ret < 0) {
 		return SK_ERR;

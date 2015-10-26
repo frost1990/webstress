@@ -63,17 +63,14 @@ int parse_opt(int argc, char **argv, http_request *request)
 	}
 
 	/* Check whether the host field is a direct ipv4 address */
-	if (is_match_pattern(request->host, REGEX_IPV4) == 0 ) {
-		request->ip = sk_str_to_ipv4(request->host); 
-	} else { 
-		request->ip = sk_get_host_ipv4(request->host); 
-		char ipstr[64] = {0};
-		sk_ipv4_tostr(request->ip, ipstr, strlen(ipstr));
-		printf("Get IP %s after DNS query: %s\n", ipstr, request->host);
-	}
+	request->ip = sk_get_host_ipv4(request->host); 
+	char ipstr[64] = {0};
+	sk_ipv4_tostr(request->ip, ipstr, strlen(ipstr));
 	if (request->ip == 0) {
 		printf("Could not resolve host: %s\n", request->host);
+		exit(0);
 	}
+	printf("Host: %s, ip: %s\n", request->host, ipstr);
 	request->port = PORT_HTTP; 
 	request->method = GET; 
 
