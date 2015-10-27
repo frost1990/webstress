@@ -134,7 +134,10 @@ int parse_opt(int argc, char **argv, http_request *request)
 		printf("Could not resolve host: %s\n", request->host);
 		exit(0);
 	}
-	printf("Host: %s, ip: %s\n", request->host, ipstr);
+	SCREEN(SCREEN_YELLOW, stdout, "Host:");
+	SCREEN(SCREEN_DARK_GREEN, stdout, " %s\n", request->host);
+	SCREEN(SCREEN_YELLOW, stdout, "IP:");
+	SCREEN(SCREEN_DARK_GREEN, stdout, " %s\n", ipstr);
 	request->port = PORT_HTTP; 
 	request->method = GET;
 
@@ -180,11 +183,12 @@ char *compose_request_buffer(const http_request* request)
 		offset += bytes;
 	}
 
+	SCREEN(SCREEN_YELLOW, stdout, "Your http request header:\n");
+	SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
+
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s\r\n", request->additional_header);
 	offset += bytes;
 
-	SCREEN(SCREEN_YELLOW, stdout, "Your http request header:\n");
-	SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
 	/* Header ends here */
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
 	offset += bytes;
