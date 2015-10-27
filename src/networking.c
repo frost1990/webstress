@@ -83,3 +83,7 @@ int close_connection(int poller_fd, int fd)
 	sk_close(fd);
 	return 0;
 }
+
+void free_conn_rcv_buffer(conn_t *pconn) {
+	free(pconn->recv_buffer);
+}

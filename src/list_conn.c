@@ -14,6 +14,7 @@ int list_conn_length(bucket_t *list)
 
 void list_conn_add(bucket_t *list, conn_t *pconn)
 {
+	int depth = list->depth;
 	while (list->next != NULL) {
 		list = list->next;
 	}
@@ -28,14 +29,17 @@ void list_conn_add(bucket_t *list, conn_t *pconn)
 	list->next->pre  = list;
 	list->key = pconn->fd;
 	list->val = pconn;
+	list->depth = depth;
 }
 
+/* This is the only entrance to free recieve bufffer */
 void list_conn_free(bucket_t *list)
 {
 	bucket_t *store = list;
 	for ( ; list != NULL; ) {
 		store = list;	
 		list = list->next;	
+		free_conn_rcv_buffer(store->val);
 		free(store);
 	}
 }

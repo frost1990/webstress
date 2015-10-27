@@ -28,7 +28,7 @@ int modhash(int key, unsigned base);
 
 void hash_conn_init(hash_conn_t *phash_conn, int conns);
 
+/* This is the only entrance to free recieve bufffer */
 void hash_conn_free(hash_conn_t *phash_conn);
-
 
 #endif

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "hash_conn.h"
+#include "list_conn.h"
 #include "screen.h"
 
 bool is_prime(int num) 
@@ -62,11 +63,25 @@ void hash_conn_init(hash_conn_t *phash_conn, int conns)
 void hash_conn_add(hash_conn_t *phash_conn, int fd)
 {
 	int idx = modhash(fd, phash_conn->table_size);
-	bucket_t *location = phash_conn->idx_ptr[idx];
+	bucket_t *location = (phash_conn->idx_ptr)[idx];
+	conn_t *pconn = (conn_t *) malloc(sizeof(conn_t));
+	if (pconn == NULL) {
+		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
+		exit(EXIT_FAILURE);
+	}
+	pconn->fd = fd;
+	pconn->recv_buffer = (char *) malloc(RECV_BUFFER_SIZE);
+	if (pconn->recv_buffer == NULL) {
+		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	location->depth++;
 	if (location->depth != 0) {
-
+		list_conn_add(location, pconn);
 	} else {
-
+		location->key = fd;
+		location->val = pconn;
 	}
 
 	phash_conn->elenum++; 
@@ -75,8 +90,9 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 void hash_conn_free(hash_conn_t *phash_conn)
 {
 	for (int i = 0; i < phash_conn->table_size; i++) {
-		free((phash_conn->idx_ptr)[i]);
+		list_conn_free((phash_conn->idx_ptr)[i]);
 	}
+
 	/* Do not forget free phash_conn somewhere else, if phash_conn is created from dynamic memory allocation */
 	free(phash_conn->idx_ptr);
 }
