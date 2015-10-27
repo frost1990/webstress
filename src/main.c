@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 	int poller_fd = ev_create();
 	start_connection(poller_fd, &request);
 	
-	ev_run_loop(poller_fd, 100);
+//	ev_run_loop(poller_fd, 100);
 
 	free_request_buffer(&request);
 

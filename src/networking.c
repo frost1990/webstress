@@ -6,19 +6,16 @@
 #include "sknet.h"
 #include "ev.h"
 #include "networking.h"
+#include "hash_conn.h"
+
+hash_conn_t ghash_conn;
 
 int start_connection(int poller_fd, const http_request *request)
 {
-
-	if (gconn_map == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Cannot allocate dynamic memory , malloc(3) failed.\n");
-		exit(EXIT_FAILURE);
-	}
-
 	for (int i = 0; i < request->connections; i++) {
 		int fd = socket(AF_INET, SOCK_STREAM, 0);
 		if (fd < 0) {
-			SCREEN(SCREEN_RED, stderr, "Cannot create socket %s\n", strerror(errno));
+			SCREEN(SCREEN_RED, stderr, "Cannot create socket: %s\n", strerror(errno));
 			exit(EXIT_FAILURE);
 		}
 
