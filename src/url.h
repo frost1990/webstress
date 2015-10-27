@@ -1,6 +1,8 @@
 #ifndef _URL_
 #define _URL_
 
+#include <stdbool.h>
+
 #include "request.h"
 #include "http_parser.h"
 

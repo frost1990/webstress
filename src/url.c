@@ -11,12 +11,12 @@ static unsigned char char2hex(unsigned char x)
 	return (unsigned char)(x > 9 ? x + 55: x + 48); 
 } 
 
-static int is_numeric(unsigned char c) 
+static bool is_numeric(unsigned char c) 
 { 
 	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))  {
-		return 1; 	
+		return true; 	
 	} else {
-		return 0; 
+		return false; 
 	}
 } 
 
