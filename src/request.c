@@ -43,6 +43,7 @@ void init_http_request(http_request *request)
 	request->ip = 0;
 	request->port = PORT_HTTP;
 	request->additional_header = NULL;
+	request->send_buffer = NULL;
 	memset(request->scheme, 0, 16);
 	memset(request->host, 0, 256);
 	memset(request->path, 0, 256);
@@ -57,7 +58,12 @@ void parse_cli(int argc, char **argv, http_request *request) {
 		switch(ch) {
 			case 'c':
 				if (atoi(optarg) < 1) {
-					printf("Connection number must be equal to or greater than one.\n");
+					SCREEN(SCREEN_RED, stderr, "Connection number must be equal to or greater than one.\n");
+					exit(EXIT_FAILURE);	
+				} 
+
+				if (atoi(optarg) > 65535) {
+					SCREEN(SCREEN_RED, stderr, "Connection number cannot exceed ephemeral port range.\n");
 					exit(EXIT_FAILURE);	
 				}
 				request->connections = atoi(optarg);
@@ -126,35 +132,36 @@ int parse_opt(int argc, char **argv, http_request *request)
 		exit(EXIT_FAILURE);
 	}
 
-	/* Check whether the host field is a direct ipv4 address */
 	request->ip = sk_get_host_ipv4(request->host); 
 	char ipstr[64] = {0};
 	sk_ipv4_tostr(request->ip, ipstr, strlen(ipstr));
 	if (request->ip == 0) {
-		printf("Could not resolve host: %s\n", request->host);
-		exit(0);
+		SCREEN(SCREEN_RED, stderr, "Could not resolve host: %s\n", request->host);
+		exit(EXIT_FAILURE);
 	}
 	SCREEN(SCREEN_YELLOW, stdout, "Host:");
 	SCREEN(SCREEN_DARK_GREEN, stdout, " %s\n", request->host);
-	SCREEN(SCREEN_YELLOW, stdout, "IP:");
-	SCREEN(SCREEN_DARK_GREEN, stdout, " %s\n", ipstr);
+	SCREEN(SCREEN_YELLOW, stdout, "Address:");
+	SCREEN(SCREEN_DARK_GREEN, stdout, " %s:", ipstr);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "%d\n", request->port);
 	request->port = PORT_HTTP; 
 	request->method = GET;
 
 	return 0;
 }
 
-char *compose_request_buffer(const http_request* request)
+void compose_request_buffer(http_request* request)
 {
 	char *buffer = malloc(REQUEST_BUFFER_SIZE * sizeof(char));
 	if (buffer == NULL) {
-		return NULL;
+		SCREEN(SCREEN_RED, stderr, "Cannot allocate dynamic memory , malloc(3) failed.\n");
+		exit(EXIT_FAILURE);
 	}
 
 	memset(buffer, 0, REQUEST_BUFFER_SIZE);
 	size_t offset = 0;
 	
-	/* Request line */
+	/* Start line */
 	int bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s ", get_method_name(request->method));
 	offset += bytes;
 
@@ -176,22 +183,32 @@ char *compose_request_buffer(const http_request* request)
 
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, " %s\r\n", HTTP_1_1);
 	offset += bytes;
-	/* Request line ends here */
+	/* Start line ends here */
+	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Accept: *\r\n");
+	offset += bytes;
+
+	/* Host */
+	if (is_match_pattern(request->host, REGEX_IPV4) != 0) {
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s\r\n", request->host);
+		offset += bytes;
+	}
 
 	if (request->http_keep_alive == HTTP_KEEP_ALIVE) {
 		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Connection: keep-alive\r\n");
 		offset += bytes;
 	}
 
-	SCREEN(SCREEN_YELLOW, stdout, "Your http request header:\n");
-	SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
-
-	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s\r\n", request->additional_header);
-	offset += bytes;
+	if (request->additional_header != NULL) {
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s\r\n", request->additional_header);
+		offset += bytes;
+	}
 
 	/* Header ends here */
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
 	offset += bytes;
+
+	SCREEN(SCREEN_YELLOW, stdout, "Your http request header:\n");
+	SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
 
 	/* Body starts */
 	if (strlen(request->bodydata) > 0) {
@@ -199,11 +216,11 @@ char *compose_request_buffer(const http_request* request)
 		offset += bytes;
 	}
 
-	return buffer;
+	request->send_buffer = buffer;
 }
 
-void free_request_buffer(char *buffer) 
+void free_request_buffer(const http_request *request) 
 {
-	free(buffer);
+	free(request->send_buffer);
 	return;
 }

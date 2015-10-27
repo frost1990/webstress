@@ -20,13 +20,11 @@ int main(int argc, char* argv[])
 
 	init_http_request(&request);
 	parse_opt(argc, argv, &request);
-	char *request_buffer = compose_request_buffer(&request);
+	compose_request_buffer(&request);
 
 	int poller_fd = ev_create();
-
 	start_connection(poller_fd, &request);
 
-	free_request_buffer(request_buffer);
-	
+	free_request_buffer(&request);
 	return 0;
 }

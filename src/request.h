@@ -29,6 +29,13 @@ typedef struct method_map {
 } method_map;
 
 typedef struct http_request {
+	char scheme[16];
+	char host[256];
+	char path[256];
+	char querystring[1024];
+	char fragment[256];
+	char bodydata[1024];
+
 	http_request_method_t method;
 	int http_keep_alive;
 	int connections;
@@ -37,13 +44,9 @@ typedef struct http_request {
 	int timeout;
 	uint32_t ip;
 	uint32_t port;
+
 	char *additional_header;
-	char scheme[16];
-	char host[256];
-	char path[256];
-	char querystring[1024];
-	char fragment[256];
-	char bodydata[1024];
+	char *send_buffer;
 } http_request;
 
 void init_http_request(http_request *request);
@@ -54,8 +57,8 @@ void parse_cli(int argc, char **argv, http_request *request);
 
 int parse_opt(int argc, char **argv, http_request *request);
 
-char *compose_request_buffer(const http_request* request);
+void compose_request_buffer(http_request* request);
 
-void free_request_buffer(char *buffer);
+void free_request_buffer(const http_request *request);
 
 #endif
