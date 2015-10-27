@@ -22,3 +22,20 @@ int start_connection(int poller_fd, const http_request *request)
 	}
 	return 0;
 }
+
+int recieve_response(int poller_fd, int fd)
+{
+
+	return 0;
+}
+
+int send_request(int poller_fd, int fd) 
+{
+
+	return 0;
+}
+
+int close_connection(int poller_fd, int fd)
+{
+	return 0;
+}

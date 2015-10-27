@@ -4,6 +4,7 @@
 
 #include "ev.h"
 #include "timer.h"
+#include "networking.h"
 
 /* Only support advanced I/O multiplex(i.e. epoll, kevent) now, select(2) and poll(2) are not available for the moment */
 #ifdef __linux__
@@ -72,9 +73,26 @@ void ev_run_loop(int poller_fd, int timeout_usec) {
 		}
 
 		for (int i = 0; i < number; i++) {
-			int event_fd = events[i].data.fd;
-			/* event_fd may  be a socket or a timerfd */
-		
+		/* event_fd may  be a socket or a timerfd */
+			int fd = events[i].data.fd;
+			if (events[i].events & EPOLLRDHUP) {   
+			} else if (events[i].events & EPOLLIN) {   
+				recieve_response(poller_fd, fd);
+
+				struct epoll_event event;
+				event.events = EPOLLOUT | EPOLLET | EPOLLERR | EPOLLRDHUP;
+				event.data.fd = fd;
+				epoll_ctl(poller_fd, EPOLL_CTL_MOD, fd, &event);
+			} else if (events[i].events & EPOLLOUT) {
+				send_request(poller_fd, fd);
+
+				struct epoll_event event;
+				event.events = EPOLLIN | EPOLLET | EPOLLERR | EPOLLRDHUP;
+				event.data.fd = fd;
+				epoll_ctl(poller_fd, EPOLL_CTL_MOD, fd, &event);
+			} else if (events[i].events & EPOLLERR) {
+
+			}
 		}
 	}
 	return;
@@ -146,12 +164,14 @@ void ev_run_loop(int poller_fd, int timeout_usec) {
 		}
 
 		for (int i = 0; i < nfds; i++) {
-			int ev_fd = events[i].ident;
+			int fd = events[i].ident;
 
 			if (events[i].filter == EVFILT_READ) {
+				recieve_response(poller_fd, fd);
 			}
 
 			if (events[i].filter == EVFILT_WRITE) {
+				send_request(poller_fd, fd);
 			}
 		}
 	}
