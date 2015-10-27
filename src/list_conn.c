@@ -14,7 +14,6 @@ int list_conn_length(bucket_t *list)
 
 void list_conn_add(bucket_t *list, conn_t *pconn)
 {
-	int depth = list->depth;
 	while (list->next != NULL) {
 		list = list->next;
 	}
@@ -29,7 +28,7 @@ void list_conn_add(bucket_t *list, conn_t *pconn)
 	list->next->pre  = list;
 	list->key = pconn->fd;
 	list->val = pconn;
-	list->depth = depth;
+	list->depth = 0;
 }
 
 /* This is the only entrance to free recieve bufffer */

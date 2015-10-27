@@ -76,7 +76,7 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 		exit(EXIT_FAILURE);
 	}
 
-	location->depth++;
+	// FIXME
 	if (location->depth != 0) {
 		list_conn_add(location, pconn);
 	} else {
@@ -84,6 +84,8 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 		location->val = pconn;
 	}
 
+	/* Only the first element of the list's depth field is meaningful */
+	location->depth++;
 	phash_conn->elenum++; 
 }
 
