@@ -9,16 +9,23 @@
 
 int start_connection(int poller_fd, const http_request *request)
 {
+
+	if (gconn_map == NULL) {
+		SCREEN(SCREEN_RED, stderr, "Cannot allocate dynamic memory , malloc(3) failed.\n");
+		exit(EXIT_FAILURE);
+	}
+
 	for (int i = 0; i < request->connections; i++) {
 		int fd = socket(AF_INET, SOCK_STREAM, 0);
 		if (fd < 0) {
-			SCREEN(SCREEN_RED, stderr, "socket %s", strerror(errno));
+			SCREEN(SCREEN_RED, stderr, "Cannot create socket %s\n", strerror(errno));
 			exit(EXIT_FAILURE);
 		}
 
 		sk_set_nonblock(fd);
 		sk_tcp_no_delay(fd);
 		sk_resue_addr(fd);
+
 		sk_async_ipv4_connect(poller_fd, fd, request->ip, request->port);
 	}
 	return 0;
@@ -33,7 +40,8 @@ int recieve_response(int poller_fd, int fd)
 		if (ret < 0)  {
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
 				break;
-			 } else if (errno == EINTR) {	/* Interupted by a signal */
+			 } else if (errno == EINTR) {	
+				/* Interupted by a signal */
 				continue;
 			} 	
 			return -1;
@@ -58,6 +66,7 @@ int send_request(int poller_fd, int fd)
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
 				break;	
 			} else if (errno == EINTR) {
+				/* Interupted by a signal */
 				continue;
 			}
 		}  

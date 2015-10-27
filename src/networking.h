@@ -3,6 +3,13 @@
 
 #include "request.h"
 
+#define RECV_BUFFER_SIZE (10 * 1024)
+
+typedef struct conn_t {
+	int fd;
+	char *recv_buffer;
+} conn_t;
+
 int start_connection(int poller_fd, const http_request *request);
 
 int recieve_response(int poller_fd, int fd);
