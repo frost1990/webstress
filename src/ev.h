@@ -5,6 +5,12 @@
 
 #define MAX_EVENT_NO 1024
 
+#define EVENT_READ 1001
+
+#define EVENT_WRITE 1001
+/* Stream socket peer closed connection */
+#define EVENT_RDHUP 1002
+
 /* Create kernel event table */
 int ev_create(void);
 /* Register a new socket's readable event to poller */

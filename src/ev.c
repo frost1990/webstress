@@ -30,9 +30,9 @@ int ev_modify_event(int poller_fd, int fd, int active_type)
 {
 	struct epoll_event event;
 	event.data.fd = fd;
-	if (active_type == EPOLLIN) {
+	if (active_type == EVENT_READ) {
 		event.events = EPOLLIN | EPOLLET | EPOLLRDHUP; 
-	} else if (active_type == EPOLLOUT) {
+	} else if (active_type == EVENT_WRITE) {
 		event.events = EPOLLIN | EPOLLET | EPOLLOUT | EPOLLRDHUP; 
 	}
 	return epoll_ctl(poller_fd, EPOLL_CTL_MOD, fd, &event);
@@ -120,7 +120,11 @@ int ev_add_event(int poller_fd, int fd)
 int ev_modify_event(int poller_fd, int fd, int active_type) 
 {	
 	struct kevent ke;
-	EV_SET(&ke, fd, active_type, EV_ADD, 0, 0, NULL);
+	if (active_type == EVENT_READ) {
+		EV_SET(&ke, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+	} else if (active_type == EVENT_WRITE) {
+		EV_SET(&ke, fd, EVFILT_WRITE | EVFILT_READ, EV_ADD, 0, 0, NULL);
+	}
 	return kevent(poller_fd, &ke, 1, NULL, 0, NULL);
 }
 
