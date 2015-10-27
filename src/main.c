@@ -16,14 +16,17 @@ struct http_request request;
 
 int main(int argc, char* argv[]) 
 {
-	SCREEN(SCREEN_BLUE, stdout, "This product is under development for the moment, please wait for a while.\nThank you for your support.");
+	SCREEN(SCREEN_BLUE, stdout, "This product is under development for the moment, please wait for a while.\nThank you for your support.\n");
 
 	init_http_request(&request);
 	parse_opt(argc, argv, &request);
+	char *request_buffer = compose_request_buffer(&request);
 
 	int poller_fd = ev_create();
 
 	start_connection(poller_fd, &request);
+
+	free_request_buffer(request_buffer);
 	
 	return 0;
 }

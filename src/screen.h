@@ -27,7 +27,7 @@
 #define CONCAT(a, b)  a b 
 
 #define COLOR_SET(color) CONCAT("\033[", color)
-#define COLOR_DISABLE "\033[0m\n"
+#define COLOR_DISABLE "\033[0m"
 
 int screen_print(const char *color, FILE *fp, const char *format, ...); 
 

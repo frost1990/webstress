@@ -104,7 +104,7 @@ int parse_opt(int argc, char **argv, http_request *request)
 {
 	if (argc == 1) {  
 		help();
-		return 0;
+		exit(EXIT_SUCCESS);
 	}
 
 	parse_cli(argc, argv, request);
@@ -116,7 +116,7 @@ int parse_opt(int argc, char **argv, http_request *request)
 	}
 
 	if (optind == argc) {
-		SCREEN(SCREEN_RED, stderr, "Please input your request url.");
+		SCREEN(SCREEN_RED, stderr, "Please input your request url.\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -152,7 +152,7 @@ char *compose_request_buffer(const http_request* request)
 	size_t offset = 0;
 	
 	/* Request line */
-	int bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s", get_method_name(request->method));
+	int bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s ", get_method_name(request->method));
 	offset += bytes;
 
 	/* Path, querystring, fragment */
@@ -171,7 +171,7 @@ char *compose_request_buffer(const http_request* request)
 		offset += bytes;
 	}
 
-	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s\r\n", HTTP_1_1);
+	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, " %s\r\n", HTTP_1_1);
 	offset += bytes;
 	/* Request line ends here */
 
@@ -183,6 +183,8 @@ char *compose_request_buffer(const http_request* request)
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s\r\n", request->additional_header);
 	offset += bytes;
 
+	SCREEN(SCREEN_YELLOW, stdout, "Your http request header:\n");
+	SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
 	/* Header ends here */
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
 	offset += bytes;
