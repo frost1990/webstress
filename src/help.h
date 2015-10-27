@@ -9,10 +9,10 @@ const char *help_message =
 "\nOPTIONS:\n"
 "	-c						Concurrent tcp connections\n"
 "	-d						Add post form data\n"
-"	-h						Print help message\n"
 "	-H						Add additional http request header\n"
+"	-h						Print help message\n"
 "	-m						Benchmark duration time in minutes\n"
-"	-t						Set request process timeout in milliseconds\n" 
+"	-t						Set request process timeout in milliseconds and calculate time out rate\n" 
 "	-v						Show version information\n";	 
 
 void help(void) 

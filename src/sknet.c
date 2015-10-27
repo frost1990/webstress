@@ -1,10 +1,3 @@
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h> /* TCP_NODELAY */
-#include <arpa/inet.h>
-#include <sys/time.h>
 #ifdef __linux__
 	#include <sys/epoll.h>
 #else
@@ -12,12 +5,6 @@
 		#include <sys/event.h>
 	#endif
 #endif
-#include <fcntl.h> 
-#include <netdb.h> 
-#include <time.h>
-#include <errno.h>
-#include <string.h>
-#include <stdarg.h>
 
 #include "sknet.h"
 
@@ -183,6 +170,36 @@ int sk_async_connect(int poller_fd, int fd, const char *ip, int port)
 	address.sin_family = AF_INET;
 
 	inet_pton(AF_INET, ip, &address.sin_addr);
+	address.sin_port = htons(port);
+
+	int ret = connect(fd, (struct sockaddr *) &address, sizeof(address));
+	if (ret == 0) {
+		return ret;
+	} else if (errno != EINPROGRESS) { 
+		return -1;  
+	} else {
+#ifdef __linux__
+		struct epoll_event event;
+		event.data.fd = fd; 
+		event.events = EPOLLOUT | EPOLLET; 
+		return epoll_ctl(poller_fd, EPOLL_CTL_ADD, fd, &event);
+#else
+	#if (defined(__APPLE__)) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined (__NetBSD__)
+		struct kevent ke;
+		EV_SET(&ke, fd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+		return kevent(poller_fd, &ke, 1, NULL, 0, NULL);
+	#endif
+#endif
+	}   
+}
+
+int sk_async_ipv4_connect(int poller_fd, int fd, uint32_t ip, int port)
+{
+	struct sockaddr_in address; 
+	bzero(&address, sizeof(address));
+	address.sin_family = AF_INET;
+
+	address.sin_addr.s_addr = htonl(ip);
 	address.sin_port = htons(port);
 
 	int ret = connect(fd, (struct sockaddr *) &address, sizeof(address));

@@ -27,11 +27,11 @@
 #define CONCAT(a, b)  a b 
 
 #define COLOR_SET(color) CONCAT("\033[", color)
-#define COLOR_DISABLE "\033[0m"
+#define COLOR_DISABLE "\033[0m\n"
 
 int screen_print(const char *color, FILE *fp, const char *format, ...); 
 
-#define SCREEN_PRINT(color, fp, format, vargs...) do { \
+#define SCREEN(color, fp, format, vargs...) do { \
 	char fmt[2048] = {0}; \
 	strncat(fmt, COLOR_SET(color), 2048 - strlen(fmt)); \
 	strncat(fmt, format, 2048 - strlen(fmt)); \

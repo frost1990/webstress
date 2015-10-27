@@ -1,6 +1,21 @@
 #ifndef _SK_NET_H_
 #define _SK_NET_H_
 
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h> /* TCP_NODELAY */
+#include <arpa/inet.h>
+#include <sys/time.h>
+#include <fcntl.h> 
+#include <netdb.h> 
+#include <time.h>
+#include <errno.h>
+#include <string.h>
+#include <stdarg.h>
+
+
 #define SK_OK 0
 #define SK_ERR -1
 
@@ -27,6 +42,8 @@ int sk_set_nonblock(int fd);
 int sk_set_block(int fd);
 /* Async connect */
 int sk_async_connect(int poller_fd, int fd, const char *ip, int port);
+
+int sk_async_ipv4_connect(int poller_fd, int fd, uint32_t ip, int port);
 
 /* Turn off Nagle's algorithm */
 int sk_tcp_no_delay(int fd);

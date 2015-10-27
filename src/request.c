@@ -116,7 +116,7 @@ int parse_opt(int argc, char **argv, http_request *request)
 	}
 
 	if (optind == argc) {
-		SCREEN_PRINT(SCREEN_RED, stderr, "Please input your request url.\n");
+		SCREEN(SCREEN_RED, stderr, "Please input your request url.");
 		exit(EXIT_FAILURE);
 	}
 
