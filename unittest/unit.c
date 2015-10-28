@@ -15,24 +15,29 @@
 	#include <malloc.h>
 #endif
 
+void memory_brief() 
+{ 
+#ifdef __linux__ 
+	malloc_stats();
+#endif
+}
 int main() {
 	hash_conn_t ht;
+	memory_brief();
 	hash_conn_init(&ht, 10);
+	memory_brief();
 
 	for (int i = 0; i < 60; i++) {
 		hash_conn_add(&ht, i);
 	}
 	hash_conn_debug_show(&ht);
-#ifdef __linux__
-	malloc_stats();
-#endif
+	memory_brief();
 	for (int i = 0; i < 30; i++) {
 		hash_conn_delete(&ht, i);
 	}
 	hash_conn_debug_show(&ht);
-#ifdef __linux__
-	malloc_stats();
-#endif
+	memory_brief();
 	hash_conn_free(&ht);
+	memory_brief();
 	return 0;
 }
