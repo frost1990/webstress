@@ -1,11 +1,10 @@
 #ifndef _CAPTURE_
 #define _CAPTURE_
 
-
-/* default snap length (maximum bytes per packet to capture) */
+/* Default snap length (maximum bytes per packet to capture) */
 #define SNAP_LEN 1518
 
-/* ethernet headers are always exactly 14 bytes [1] */
+/* Ethernet headers are always exactly 14 bytes [1] */
 #define SIZE_ETHERNET 14
 
 /* Ethernet addresses are 6 bytes */
@@ -61,6 +60,5 @@ struct sniff_tcp {
 	u_short th_sum;                 /* checksum */
 	u_short th_urp;                 /* urgent pointer */
 };
-
 
 #endif
