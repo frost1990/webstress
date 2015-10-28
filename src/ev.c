@@ -170,7 +170,7 @@ int ev_del_timer(int poller_fd, int timerfd) {
 }
 
 /* Start a event loop */
-void ev_run_loop(int poller_fd, int timeout_usec) {
+void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 	struct kevent events[MAX_EVENT_NO];
 	int nfds = 0;
 	struct timespec timeout;

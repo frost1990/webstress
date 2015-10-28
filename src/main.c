@@ -6,6 +6,7 @@
 #include "screen.h"
 #include "networking.h"
 #include "sknet.h"
+#include "hash_conn.h"
 #include "ev.h"
 
 long long request_seq = 0;
@@ -14,6 +15,7 @@ struct timeval start;
 struct timeval end;
 
 struct http_request myreq;
+extern hash_conn_t ghash_conn;
 
 int main(int argc, char* argv[]) 
 {
@@ -27,7 +29,9 @@ int main(int argc, char* argv[])
 	int poller_fd = ev_create();
 	start_connection(poller_fd, &myreq);
 	ev_run_loop(poller_fd, 100, myreq.ip, myreq.port);
+
 	free_request_buffer(&myreq);
+	hash_conn_free(&ghash_conn);
 
 	return 0;
 }
