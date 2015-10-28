@@ -8,6 +8,7 @@
 typedef struct conn_t {
 	int fd;
 	char *recv_buffer;
+	size_t offset;
 } conn_t;
 
 int start_connection(int poller_fd, const http_request *request);

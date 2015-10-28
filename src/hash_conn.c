@@ -72,6 +72,7 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 	}
 	pconn->fd = fd;
 	pconn->recv_buffer = (char *) malloc(RECV_BUFFER_SIZE);
+	pconn->offset = 0; 
 	if (pconn->recv_buffer == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
 		exit(EXIT_FAILURE);
