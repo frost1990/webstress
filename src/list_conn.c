@@ -25,19 +25,28 @@ void list_conn_add(bucket_t *list, conn_t *pconn)
 	}
 
 	list->next->next = NULL;
-	list->key = pconn->fd;
-	list->val = pconn;
-	list->depth = 0;
+	list->next->key = pconn->fd;
+	list->next->val = pconn;
+	list->next->depth = 0;
 }
 
 void list_conn_delete(bucket_t *list, int fd)
 {
-	/* In this case, depth = 1 */
+	/* In this case, delete the first node of the list  */
 	if (list->key == fd) {
 		/* Free connection recieve buffer (char *) */ 
-		free(list->val->recv_buffer);
+		free_conn_rcv_buffer(list->val);
 		/* Free conn_t */ 
 		free(list->val);
+
+		if (list->next != NULL) {
+			bucket_t *store = list->next;
+			list->key = store->key;
+			list->val = store->val;
+			list->next = store->next;
+			/* Don't free store->val and store->val->recv_buffer */
+			free(store);
+		}
 		return;
 	}
 
@@ -46,7 +55,7 @@ void list_conn_delete(bucket_t *list, int fd)
 		bucket_t* q = p->next; 
 		if (q->key == fd) {
 			/* Free connection recieve buffer (char *) */ 
-			free(q->val->recv_buffer);
+			free_conn_rcv_buffer(q->val);
 			/* Free conn_t */ 
 			free(q->val);
 			p->next = q->next;
@@ -57,13 +66,23 @@ void list_conn_delete(bucket_t *list, int fd)
 	}
 }
 
+void list_conn_debug_show(bucket_t *list)
+{
+
+	for ( ; list != NULL; list = list->next) {
+		SCREEN(SCREEN_DARK_GREEN, stdout,"socket %d-> ", list->key);
+	}
+	SCREEN(SCREEN_DARK_GREEN, stdout,"NULL\n");
+	return;
+}
+
 void list_conn_free(bucket_t *list)
 {
-	bucket_t *store = list;
 	for ( ; list != NULL; ) {
-		store = list;	
-		list = list->next;	
+		bucket_t *store = list;
 		free_conn_rcv_buffer(store->val);
+		list = store->next;
+		SCREEN(SCREEN_YELLOW, stdout,"Will delete socket %d\n", store->key);
 		free(store);
 	}
 }

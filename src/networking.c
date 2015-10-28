@@ -86,4 +86,5 @@ int close_connection(int poller_fd, int fd)
 
 void free_conn_rcv_buffer(conn_t *pconn) {
 	free(pconn->recv_buffer);
+	pconn->recv_buffer = NULL;
 }

@@ -33,6 +33,7 @@ void hash_conn_delete(hash_conn_t *phash_conn, int fd);
 
 conn_t *hash_conn_get(hash_conn_t *phash_conn, int fd);
 
+void hash_conn_debug_show(hash_conn_t *phash_conn); 
 
 /* This is the only entrance to free recieve bufffer */
 void hash_conn_free(hash_conn_t *phash_conn);

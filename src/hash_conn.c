@@ -111,7 +111,24 @@ void hash_conn_delete(hash_conn_t *phash_conn, int fd)
 	}	
 	list_conn_delete(location, fd);
 	location->depth--;
+	phash_conn->elenum--;
 	return;
+}
+
+void hash_conn_debug_show(hash_conn_t *phash_conn) 
+{
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Hash table size %u, now %d elements\n", phash_conn->table_size, phash_conn->elenum);
+	for (int i = 0; i < phash_conn->table_size; i++) {
+		bucket_t *location = (phash_conn->idx_ptr)[i];
+		int depth = location->depth; 
+		if (depth == 0) {
+			SCREEN(SCREEN_GREEN, stdout, "Slot %d is empty\n", i);
+		} else {
+			SCREEN(SCREEN_GREEN, stdout, "Slot %d depth is %d\n", i, location->depth);
+			list_conn_debug_show(location);
+		}
+	}
+
 }
 
 void hash_conn_free(hash_conn_t *phash_conn)
