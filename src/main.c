@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
 	int poller_fd = ev_create();
 	start_connection(poller_fd, &myreq);
-	ev_run_loop(poller_fd, 100);
+	ev_run_loop(poller_fd, 100, myreq.ip, myreq.port);
 	free_request_buffer(&myreq);
 
 	return 0;

@@ -21,6 +21,9 @@ void memory_brief()
 	malloc_stats();
 #endif
 }
+
+struct http_request myreq;
+
 int main() {
 	hash_conn_t ht;
 	memory_brief();

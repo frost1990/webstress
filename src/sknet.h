@@ -52,7 +52,13 @@ int sk_resue_addr(int fd);
 /* Enable TCP Keep-Alive */
 int sk_tcp_keepalive(int fd);
 
+/* Check pending error for the socket */
+int sk_check_so_error(int fd);
+
 int sk_close(int fd);
+/* Make sure drain all remaining data from tcp recv buffer and send A FIN segment instead of RST */
+/* Please make sure your socket file descriptor working in nonblock mode */
+int sk_fin_close(int fd);
 
 /* Get hosts or dns query */
 uint32_t sk_get_host_ipv4(char *host);

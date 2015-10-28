@@ -19,6 +19,8 @@ int send_request(int poller_fd, int fd);
 
 int close_connection(int poller_fd, int fd);
 
+int reconnect(int poller_fd, uint32_t ip, int port);
+
 void free_conn_rcv_buffer(conn_t *pconn);
 
 #endif

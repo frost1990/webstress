@@ -6,6 +6,8 @@
 	#endif
 #endif
 
+#include <stdbool.h>
+
 #include "sknet.h"
 
 /* Only works in block mode */
@@ -253,8 +255,49 @@ int sk_tcp_keepalive(int fd)
 	return 0;
 }
 
+/* Check pending error for the socket */
+int sk_check_so_error(int fd)
+{
+	int error = 0;
+	socklen_t length = sizeof(error);
+
+	if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &length) < 0) {
+		return -1;
+	}
+
+	if (error != 0) {
+		return -1;
+	}
+	return 0;
+}
+
 int sk_close(int fd) 
 {
+	return close(fd);
+}
+
+int sk_fin_close(int fd)
+{
+	char buffer[1024] = {0};
+	int bytes = 0;
+	while (true) {
+		/* We do not care what the data is, we just want to drain all data out */
+		int ret = recv(fd, buffer, 1024, 0);
+		if (ret < 0) {
+			if (errno == EAGAIN || errno == EWOULDBLOCK) {
+				break;
+			 } else if (errno == EINTR) {	
+				/* Interupted by a signal */
+				continue;
+			} else { 	
+				break;
+			}
+		} else if (ret == 0) {
+			return close(fd);
+		} else {
+			bytes += ret;
+		}
+	}
 	return close(fd);
 }
 

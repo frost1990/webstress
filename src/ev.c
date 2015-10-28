@@ -5,6 +5,7 @@
 #include "ev.h"
 #include "timer.h"
 #include "networking.h"
+#include "sknet.h"
 
 /* Only support advanced I/O multiplex(i.e. epoll, kevent) now, select(2) and poll(2) are not available for the moment */
 #ifdef __linux__
@@ -61,7 +62,7 @@ int ev_del_timer(int poller_fd, int timerfd) {
 }
 
 /* Start a event loop */
-void ev_run_loop(int poller_fd, int timeout_usec) {
+void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 	struct epoll_event events[MAX_EVENT_NO];
 	while (true) {
 		int number = epoll_wait(poller_fd, events, MAX_EVENT_NO, timeout_usec); 
@@ -76,22 +77,40 @@ void ev_run_loop(int poller_fd, int timeout_usec) {
 		/* event_fd may  be a socket or a timerfd */
 			int fd = events[i].data.fd;
 			if (events[i].events & EPOLLRDHUP) {   
+				close_connection(poller_fd, fd);
+				reconnect(poller_fd, ip, port);
+				continue;
 			} else if (events[i].events & EPOLLIN) {   
-				recieve_response(poller_fd, fd);
-
+				int	ret = recieve_response(poller_fd, fd);
+				if (ret <= 0) {
+					close_connection(poller_fd, fd);
+					reconnect(poller_fd, ip, port);
+					continue;
+				} 
 				struct epoll_event event;
 				event.events = EPOLLOUT | EPOLLET | EPOLLERR | EPOLLRDHUP;
 				event.data.fd = fd;
 				epoll_ctl(poller_fd, EPOLL_CTL_MOD, fd, &event);
 			} else if (events[i].events & EPOLLOUT) {
-				send_request(poller_fd, fd);
-
+				if (sk_check_so_error(fd) != 0) {
+					close_connection(poller_fd, fd);
+					reconnect(poller_fd, ip, port);
+					continue;
+				}
+				int ret = send_request(poller_fd, fd);
+				if (ret <= 0) {
+					close_connection(poller_fd, fd);
+					reconnect(poller_fd, ip, port);
+					continue;
+				}
 				struct epoll_event event;
 				event.events = EPOLLIN | EPOLLET | EPOLLERR | EPOLLRDHUP;
 				event.data.fd = fd;
 				epoll_ctl(poller_fd, EPOLL_CTL_MOD, fd, &event);
 			} else if (events[i].events & EPOLLERR) {
-
+				close_connection(poller_fd, fd);
+				reconnect(poller_fd, ip, port);
+				continue;
 			}
 		}
 	}
