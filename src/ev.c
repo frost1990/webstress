@@ -87,10 +87,8 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 					reconnect(poller_fd, ip, port);
 					continue;
 				} 
-				struct epoll_event event;
-				event.events = EPOLLOUT | EPOLLET | EPOLLERR | EPOLLRDHUP;
-				event.data.fd = fd;
-				epoll_ctl(poller_fd, EPOLL_CTL_MOD, fd, &event);
+				
+				ev_modify_event(poller_fd, fd, EVENT_WRITE); 
 			} else if (events[i].events & EPOLLOUT) {
 				if (sk_check_so_error(fd) != 0) {
 					close_connection(poller_fd, fd);
@@ -103,10 +101,7 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 					reconnect(poller_fd, ip, port);
 					continue;
 				}
-				struct epoll_event event;
-				event.events = EPOLLIN | EPOLLET | EPOLLERR | EPOLLRDHUP;
-				event.data.fd = fd;
-				epoll_ctl(poller_fd, EPOLL_CTL_MOD, fd, &event);
+				ev_modify_event(poller_fd, fd, EVENT_READ); 
 			} else if (events[i].events & EPOLLERR) {
 				close_connection(poller_fd, fd);
 				reconnect(poller_fd, ip, port);
@@ -140,9 +135,9 @@ int ev_modify_event(int poller_fd, int fd, int active_type)
 {	
 	struct kevent ke;
 	if (active_type == EVENT_READ) {
-		EV_SET(&ke, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+		EV_SET(&ke, fd, EVFILT_READ, EV_ADD | EV_ENABLE | EV_CLEAR, 0, 0, NULL);
 	} else if (active_type == EVENT_WRITE) {
-		EV_SET(&ke, fd, EVFILT_WRITE | EVFILT_READ, EV_ADD, 0, 0, NULL);
+		EV_SET(&ke, fd, EVFILT_WRITE | EVFILT_READ, EV_ADD | EV_ENABLE | EV_CLEAR, 0, 0, NULL);
 	}
 	return kevent(poller_fd, &ke, 1, NULL, 0, NULL);
 }
@@ -188,13 +183,42 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 
 		for (int i = 0; i < nfds; i++) {
 			int fd = events[i].ident;
+			/* If detect an EOF */
+			if (events[i].flags & EV_EOF) {   
+				close_connection(poller_fd, fd);
+				reconnect(poller_fd, ip, port);
+				continue;
+			}
+			/* Report any error */
+			if (events[i].flags & EV_ERROR) {   
+				close_connection(poller_fd, fd);
+				reconnect(poller_fd, ip, port);
+				continue;
+			}
 
 			if (events[i].filter == EVFILT_READ) {
-				recieve_response(poller_fd, fd);
+				int ret = recieve_response(poller_fd, fd);
+				if (ret <= 0) {
+					close_connection(poller_fd, fd);
+					reconnect(poller_fd, ip, port);
+					continue;
+				}
+				ev_modify_event(poller_fd, fd, EVENT_WRITE); 
 			}
 
 			if (events[i].filter == EVFILT_WRITE) {
-				send_request(poller_fd, fd);
+				if (sk_check_so_error(fd) != 0) {
+					close_connection(poller_fd, fd);
+					reconnect(poller_fd, ip, port);
+					continue;
+				}
+				int ret = send_request(poller_fd, fd);
+				if (ret <= 0) {
+					close_connection(poller_fd, fd);
+					reconnect(poller_fd, ip, port);
+					continue;
+				}
+				ev_modify_event(poller_fd, fd, EVENT_READ); 
 			}
 		}
 	}

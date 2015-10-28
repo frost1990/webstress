@@ -188,7 +188,7 @@ int sk_async_connect(int poller_fd, int fd, const char *ip, int port)
 #else
 	#if (defined(__APPLE__)) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined (__NetBSD__)
 		struct kevent ke;
-		EV_SET(&ke, fd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+		EV_SET(&ke, fd, EVFILT_WRITE, EV_ADD | EV_ENABLE | EV_CLEAR, 0, 0, NULL);
 		return kevent(poller_fd, &ke, 1, NULL, 0, NULL);
 	#endif
 #endif
