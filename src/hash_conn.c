@@ -48,7 +48,7 @@ void hash_conn_init(hash_conn_t *phash_conn, int conns)
 	}
 
 	for (int i = 0; i < phash_conn->table_size; i++) {
-		(phash_conn->idx_ptr)[i] = malloc(sizeof(conn_t));
+		(phash_conn->idx_ptr)[i] = malloc(sizeof(bucket_t));
 		if ((phash_conn->idx_ptr)[i] == NULL) {
 			SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
 			exit(EXIT_FAILURE);
