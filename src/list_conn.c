@@ -25,13 +25,38 @@ void list_conn_add(bucket_t *list, conn_t *pconn)
 	}
 
 	list->next->next = NULL;
-	list->next->pre  = list;
 	list->key = pconn->fd;
 	list->val = pconn;
 	list->depth = 0;
 }
 
-/* This is the only entrance to free recieve bufffer */
+void list_conn_delete(bucket_t *list, int fd)
+{
+	/* In this case, depth = 1 */
+	if (list->key == fd) {
+		/* Free connection recieve buffer (char *) */ 
+		free(list->val->recv_buffer);
+		/* Free conn_t */ 
+		free(list->val);
+		return;
+	}
+
+	bucket_t* p = list; 
+	for ( ; p->next != NULL; p = p->next ) {
+		bucket_t* q = p->next; 
+		if (q->key == fd) {
+			/* Free connection recieve buffer (char *) */ 
+			free(q->val->recv_buffer);
+			/* Free conn_t */ 
+			free(q->val);
+			p->next = q->next;
+			/* Free bucket_t */ 
+			free(q);
+			return;
+		}
+	}
+}
+
 void list_conn_free(bucket_t *list)
 {
 	bucket_t *store = list;

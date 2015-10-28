@@ -11,7 +11,6 @@ typedef struct bucket_t {
 	conn_t *val;			/* Connection detail structure */
 	int depth;				/* Depth of the bucket, alse means the length of conflict linked list */
 	struct bucket_t *next; 	/* When conflict happens, use linked list to address latter elements */
-	struct bucket_t *pre;	/* When conflict happens, use linked list to address latter elements */
 } bucket_t;
 
 typedef struct hash_map {
@@ -27,6 +26,13 @@ uint32_t get_nearest_prime(uint32_t base);
 int modhash(int key, unsigned base);
 
 void hash_conn_init(hash_conn_t *phash_conn, int conns);
+
+void hash_conn_add(hash_conn_t *phash_conn, int fd);
+
+void hash_conn_delete(hash_conn_t *phash_conn, int fd);
+
+conn_t *hash_conn_get(hash_conn_t *phash_conn, int fd);
+
 
 /* This is the only entrance to free recieve bufffer */
 void hash_conn_free(hash_conn_t *phash_conn);

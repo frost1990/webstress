@@ -55,8 +55,9 @@ void hash_conn_init(hash_conn_t *phash_conn, int conns)
 		}
 
 		(phash_conn->idx_ptr)[i]->depth = 0;
-		(phash_conn->idx_ptr)[i]->key = 0;
+		(phash_conn->idx_ptr)[i]->key = -1;
 		(phash_conn->idx_ptr)[i]->val = NULL;
+		(phash_conn->idx_ptr)[i]->next = NULL;
 	}
 }
 
@@ -76,7 +77,6 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 		exit(EXIT_FAILURE);
 	}
 
-	// FIXME
 	if (location->depth != 0) {
 		list_conn_add(location, pconn);
 	} else {
@@ -89,12 +89,37 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 	phash_conn->elenum++; 
 }
 
+conn_t *hash_conn_get(hash_conn_t *phash_conn, int fd)
+{
+
+	int idx = modhash(fd, phash_conn->table_size);
+	bucket_t *location = (phash_conn->idx_ptr)[idx];
+	for (bucket_t * p = location; p != NULL; p = p->next) {
+		if (p->key == fd) {
+			return p->val;
+		}
+	}
+	return NULL;
+}
+
+void hash_conn_delete(hash_conn_t *phash_conn, int fd)
+{
+	int idx = modhash(fd, phash_conn->table_size);
+	bucket_t *location = (phash_conn->idx_ptr)[idx];
+	if (location->depth == 0) {
+		return;
+	}	
+	list_conn_delete(location, fd);
+	location->depth--;
+	return;
+}
+
 void hash_conn_free(hash_conn_t *phash_conn)
 {
 	for (int i = 0; i < phash_conn->table_size; i++) {
 		list_conn_free((phash_conn->idx_ptr)[i]);
 	}
 
-	/* Do not forget free phash_conn somewhere else, if phash_conn is created from dynamic memory allocation */
+	/* Do not forget to free phash_conn somewhere else, if phash_conn is created from heap dynamic memory allocation */
 	free(phash_conn->idx_ptr);
 }
