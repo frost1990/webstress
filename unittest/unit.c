@@ -13,6 +13,12 @@
 #include "version.h"
 
 int main() {
+	hash_conn_t ht;
+	hash_conn_init(&ht, 10000);
+
+	for(int i = 3; i < 20000; i++) {
+		hash_conn_add(&ht, i);
+	}
 
 	return 0;
 }

@@ -20,7 +20,7 @@ SRCS = 	../src/ev.c \
 		unit.c 
 
 unittester: 
-	gcc -o unittester -Wall -I../src $(LINK) $(SRCS) -g 
+	gcc -o unittester -Wall -I../src $(LINK) $(SRCS) $(CFLAGS) -g 
 clean:
-	rm -rf *.o
+	rm -rf *.o unittester
 install:
