@@ -8,9 +8,9 @@
 
 #define EVENT_READ 1001
 
-#define EVENT_WRITE 1001
+#define EVENT_WRITE 1002
 /* Stream socket peer closed connection */
-#define EVENT_RDHUP 1002
+#define EVENT_RDHUP 1003
 
 /* Create kernel event table */
 int ev_create(void);

@@ -74,7 +74,7 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 		}
 
 		for (int i = 0; i < number; i++) {
-		/* event_fd may  be a socket or a timerfd */
+			/* event_fd may  be a socket or a timerfd */
 			int fd = events[i].data.fd;
 			if (events[i].events & EPOLLRDHUP) {   
 				close_connection(poller_fd, fd);
