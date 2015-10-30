@@ -42,6 +42,7 @@ void init_http_request(http_request *request)
 	request->http_keep_alive = HTTP_KEEP_ALIVE;
 	request->ip = 0;
 	request->port = PORT_HTTP;
+	request->pipelining = false;
 	request->additional_header = NULL;
 	request->send_buffer = NULL;
 	memset(request->scheme, 0, 16);
@@ -54,7 +55,7 @@ void init_http_request(http_request *request)
 
 void parse_cli(int argc, char **argv, http_request *request) {
 	int ch;                     
-	while ((ch = getopt(argc, argv, "c:d:H:hm:t:v")) != -1) {
+	while ((ch = getopt(argc, argv, "c:d:H:hm:pt:v")) != -1) {
 		switch(ch) {
 			case 'c':
 				if (atoi(optarg) < 1) {
@@ -84,6 +85,9 @@ void parse_cli(int argc, char **argv, http_request *request) {
 					exit(EXIT_FAILURE);	
 				}
 				request->duration = 60 * atoi(optarg);
+				break;
+			case 'p':
+				request->pipelining = true;
 				break;
 			case 't':
 				if (atoi(optarg) < 1) {

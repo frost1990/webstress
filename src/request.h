@@ -2,6 +2,7 @@
 #define _REQUEST_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define HTTP_1_1 "HTTP/1.1"
 
@@ -44,6 +45,8 @@ typedef struct http_request {
 	int timeout;
 	uint32_t ip;
 	uint32_t port;
+
+	bool pipelining;
 
 	char *additional_header;
 	char *send_buffer;
