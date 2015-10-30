@@ -68,16 +68,8 @@ void stats_add(stats_t* record, uint32_t element)
 		stats_resize(record);
 	}
 
-	if (record->size == 0) {
-		printf("first ele %u\n", element);
-	}
 	record->data[record->size] = element;
 	record->size++;
-	for (int i = 0; i < record->size; i++) {
-		printf("%u ", record->data[i]);
-	}
-	printf("\n");
-
 }
 
 void stats_resize(stats_t* record) 
@@ -144,7 +136,7 @@ double stats_stddev(stats_t * record)
 
 void stats_sort(stats_t *record) 
 {
-	quicksort(record->data, 0, record->size);
+	quicksort(record->data, 0, record->size - 1);
 }
 
 void stats_summary(http_request *request, stats_t *record)
@@ -173,7 +165,11 @@ void stats_summary(http_request *request, stats_t *record)
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %4.3f ms\n", (double) min / 1000.00);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %4.3f ms\n", stddev / 1000.00);
 
-	free(&record);
+	for (int i = 0; i < record->size; i++) {
+		printf("%u ", record->data[i]);
+	}
+	printf("\n");
+	stats_free(record);
 	return;
 }
 

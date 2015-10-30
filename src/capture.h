@@ -1,7 +1,6 @@
 #ifndef _CAPTURE_
 #define _CAPTURE_
 
-#include <pcap.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
