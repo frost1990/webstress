@@ -18,6 +18,7 @@ void list_conn_add(bucket_t *list, conn_t *pconn)
 		list = list->next;
 	}
 
+	printf("hello: %d %s\n", __LINE__, __FILE__);
 	list->next = (bucket_t *) malloc(sizeof(bucket_t));
 	if (list->next == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");

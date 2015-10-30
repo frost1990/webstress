@@ -70,9 +70,6 @@ int recieve_response(int poller_fd, int fd)
 	gettimeofday(&now, NULL);
 	uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
 
-	if (cost <= 1000) {
-		printf("socket %d, low latency\n", fd); 
-	}
 	stats_add(&net_record, cost);
 	return bytes;
 }

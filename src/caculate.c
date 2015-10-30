@@ -50,6 +50,7 @@ void stats_init(stats_t* record)
 {
 	record->size = 0;
 	record->capacity = STATS_INIT_SIZE;
+	printf("hello: %d %s\n", __LINE__, __FILE__);
 	record->data = (uint32_t *) malloc(record->capacity * sizeof(uint32_t));
 	record->total_requests = 0;
 	record->total_responses = 0; 
@@ -75,6 +76,7 @@ void stats_add(stats_t* record, uint32_t element)
 void stats_resize(stats_t* record) 
 {
 	record->capacity *= 2;
+	printf("hello: %d %s\n", __LINE__, __FILE__);
 	record->data = (uint32_t *)realloc(record->data, (record->capacity) * sizeof(uint32_t));
 	if (record->data == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
@@ -154,7 +156,7 @@ void stats_summary(http_request *request, stats_t *record)
 	uint32_t duration = stats_get_interval(&start, &end);
 	double seconds = ((long double)duration) / (1000000.00);
 
-	SCREEN(SCREEN_YELLOW, stdout, "Total Summary\n");
+	SCREEN(SCREEN_YELLOW, stdout, "Total summary\n");
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Duration: %4.2f seconds\n", seconds);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu requests sent, %4.2f requests per second\n", record->total_requests, record->total_requests / seconds);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu responses recieved, %4.2f responses per second\n", record->total_responses, record->total_responses / seconds);
@@ -170,9 +172,13 @@ void stats_summary(http_request *request, stats_t *record)
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Average: %4.3f ms\n", avg / 1000);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum: %4.3f ms\n", (double) max / 1000.00);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %4.3f ms\n", (double) min / 1000.00);
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %4.3f ms\n", stddev / 1000.00);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %4.3f ms\n\n", stddev / 1000.00);
 	
-	stats_vector_debug_show(record);
+	SCREEN(SCREEN_YELLOW, stdout, "Percentage of the requests served within a certain time (ms)\n\n");
+
+	SCREEN(SCREEN_YELLOW, stdout, "Http status code brief\n\n");
+
+//	stats_vector_debug_show(record);
 
 	stats_sort(record);	
 	stats_free(record);
