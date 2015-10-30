@@ -63,13 +63,21 @@ void stats_init(stats_t* record)
 
 void stats_add(stats_t* record, uint32_t element)
 {
-	record->size++;
 	/* Auto resize, just like std::vector in C++ STL */
 	if (record->size >= record->capacity / 2) {
 		stats_resize(record);
 	}
 
+	if (record->size == 0) {
+		printf("first ele %u\n", element);
+	}
 	record->data[record->size] = element;
+	record->size++;
+	for (int i = 0; i < record->size; i++) {
+		printf("%u ", record->data[i]);
+	}
+	printf("\n");
+
 }
 
 void stats_resize(stats_t* record) 
@@ -116,6 +124,7 @@ uint32_t stats_min(stats_t * record)
 	for (int i = 0; i < record->size; i++) {
 		if (min > (record->data)[i] ) {
 			min = (record->data)[i];
+			printf("Min = %u, i = %d\n", min, i);
 		}
 	}
 	return min;
@@ -159,11 +168,12 @@ void stats_summary(http_request *request, stats_t *record)
 	double stddev = stats_stddev(record);
 
 	SCREEN(SCREEN_YELLOW, stdout, "Cost time\n");
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Average: %4.2f ms\n", avg / 1000);
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum: %4.2f ms\n", (double) max / 1000.00);
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %4.2f ms\n", (double) min / 1000.00);
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %4.2f ms\n", stddev / 1000.00);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Average: %4.3f ms\n", avg / 1000);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum: %4.3f ms\n", (double) max / 1000.00);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %4.3f ms\n", (double) min / 1000.00);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %4.3f ms\n", stddev / 1000.00);
 
+	free(&record);
 	return;
 }
 
