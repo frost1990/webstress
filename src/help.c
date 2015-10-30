@@ -5,15 +5,14 @@
 const char *help_message = 
 "\nUSAGE: webpress [options] <url>\n"
 "\nOPTIONS:\n"
-"	-c						Concurrent tcp connections\n"
-"	-d						Add post form data\n"
-"	-H						Add additional http request header\n"
-"	-h						Print help message\n"
-"	-m						Benchmark duration time in minutes\n"
-"	-p						Run in pipelining mode, will send as many requests as possible, \n"
-"							some summary information are not available \n"
-"	-t						Set request process timeout in milliseconds and calculate time out rate\n" 
-"	-v						Show version information\n";	 
+"	-c			Concurrent tcp connections\n"
+"	-d			Add post form data\n"
+"	-H			Add additional http request header\n"
+"	-h			Print help message\n"
+"	-m			Benchmark duration time in minutes\n"
+"	-p			Run in pipelining mode, will send as many requests as possible,	some summary information are not available\n"
+"	-t			Set request process timeout in milliseconds and calculate time out rate\n" 
+"	-v			Show version information\n";	 
 
 void help(void) 
 {

@@ -116,7 +116,6 @@ uint32_t stats_min(stats_t * record)
 	for (int i = 0; i < record->size; i++) {
 		if (min > (record->data)[i] ) {
 			min = (record->data)[i];
-			printf("Min = %u, i = %d\n", min, i);
 		}
 	}
 	return min;
@@ -139,6 +138,15 @@ void stats_sort(stats_t *record)
 	quicksort(record->data, 0, record->size - 1);
 }
 
+void stats_vector_debug_show(stats_t *record)
+{
+	for (int i = 0; i < record->size; i++) {
+		SCREEN(SCREEN_YELLOW, stdout, "%u ", (record->data)[i]);
+	}
+	SCREEN(SCREEN_YELLOW, stdout, "\n");
+
+}
+
 void stats_summary(http_request *request, stats_t *record)
 {
 	struct timeval end;
@@ -153,7 +161,6 @@ void stats_summary(http_request *request, stats_t *record)
 	double finished = (record->total_responses) ? ((double) record->total_responses/ (double) record->total_requests) : 0;
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percent: %4.2f\%%\n\n", 100 * finished);
 
-	stats_sort(record);	
 	double avg = stats_avg(record);
 	uint32_t max = stats_max(record);
 	uint32_t min = stats_min(record);
@@ -164,11 +171,10 @@ void stats_summary(http_request *request, stats_t *record)
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum: %4.3f ms\n", (double) max / 1000.00);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %4.3f ms\n", (double) min / 1000.00);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %4.3f ms\n", stddev / 1000.00);
+	
+	stats_vector_debug_show(record);
 
-	for (int i = 0; i < record->size; i++) {
-		printf("%u ", record->data[i]);
-	}
-	printf("\n");
+	stats_sort(record);	
 	stats_free(record);
 	return;
 }

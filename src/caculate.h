@@ -39,6 +39,8 @@ double stats_stddev(stats_t * record);
 
 void stats_sort(stats_t *record);
 
+void stats_vector_debug_show(stats_t *record);
+
 void stats_summary(http_request *request, stats_t *record);
 
 void interupt_summary(int signal);
