@@ -13,7 +13,7 @@ static void get_header_value(const char *recv_buffer, const char *header, char *
 	char *p = NULL;
 	char *start = NULL;
 	char *end = NULL;
-	char *line_start = strcasestr(recv_buffer, header);
+	char *line_start = strstr(recv_buffer, header);
 	
 	if (line_start != NULL) {
 		while (!IS_ENDLINE(p) && *p != ':') {
