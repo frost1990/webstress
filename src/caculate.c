@@ -147,7 +147,7 @@ void stats_summary(http_request *request, stats_t *record)
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu requests sent, %lf requests per second\n", record->total_requests, record->total_requests / seconds);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu responses recieved, %lf responses per second\n", record->total_responses, record->total_responses / seconds);
 	double finished = (record->total_responses) ? ((double) record->total_responses/ (double) record->total_responses) : 0;
-    SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percent %f\%%\n\n", 100 * finished);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percent %f\%%\n\n", 100 * finished);
 
 	stats_sort(record);	
 	long double avg = stats_avg(record);
@@ -156,10 +156,10 @@ void stats_summary(http_request *request, stats_t *record)
 	long double stddev = stats_stddev(record);
 
 	SCREEN(SCREEN_YELLOW, stdout, "Cost time\n");
-    SCREEN(SCREEN_DARK_GREEN, stdout, "Average: %lf ms\n", avg / 1000);
-    SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum: %lu ms\n", max / 1000);
-    SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %lf ms\n", min / 1000);
-    SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %lf ms\n", stddev / 1000);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Average: %lf ms\n", avg / 1000);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum: %lu ms\n", max / 1000);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %lf ms\n", min / 1000);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %lf ms\n", stddev / 1000);
 
 	return;
 }
