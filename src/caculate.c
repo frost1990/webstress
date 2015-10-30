@@ -5,6 +5,8 @@
 #include "caculate.h"
 #include "screen.h"	
 
+extern struct timeval start;
+
 static void quicksort(uint64_t *array, int left, int right) {
 	if (left < right) {
 		int key = array[left];
@@ -36,11 +38,19 @@ static void quicksort(uint64_t *array, int left, int right) {
 	}
 }
 
+static uint64_t get_interval(struct timeval *start, struct timeval *end) 
+{
+	uint64_t interval = (end->tv_sec - end->tv_sec) * 1000000 + (end->tv_usec - end->tv_usec);
+	return interval;
+}
+
 void stats_init(stats_t* record) 
 {
 	record->size = 0;
 	record->capacity = STATS_INIT_SIZE;
 	record->data = (uint64_t *) malloc(record->capacity * sizeof(uint64_t));
+	record->total_requests = 0;
+	record->total_responses = 0; 
 	if (record->data == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
 		exit(EXIT_FAILURE);
@@ -123,4 +133,33 @@ long double stats_stddev(stats_t * record)
 void stats_sort(stats_t *record) 
 {
 	quicksort(record->data, 0, record->size);
+}
+
+void stats_summary(http_request *request, stats_t *record)
+{
+	struct timeval end;
+	gettimeofday(&end, NULL);
+	uint64_t duration = get_interval(&start, &end);
+	long double seconds = (double) (duration) / (1000 *1000);
+
+	SCREEN(SCREEN_YELLOW, stdout, "Total Summary\n");
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Duration time:  %lf seconds\n", seconds);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu requests sent, %lf requests per second\n", record->total_requests, record->total_requests / seconds);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu responses recieved, %lf responses per second\n", record->total_responses, record->total_responses / seconds);
+	double finished = (record->total_responses) ? ((double) record->total_responses/ (double) record->total_responses) : 0;
+    SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percent %f\%%\n\n", 100 * finished);
+
+	stats_sort(record);	
+	long double avg = stats_avg(record);
+	uint64_t max = stats_max(record);
+	uint64_t min = stats_min(record);
+	long double stddev = stats_stddev(record);
+
+	SCREEN(SCREEN_YELLOW, stdout, "Cost time\n");
+    SCREEN(SCREEN_DARK_GREEN, stdout, "Average: %lf ms\n", avg / 1000);
+    SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum: %lu ms\n", max / 1000);
+    SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %lf ms\n", min / 1000);
+    SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %lf ms\n", stddev / 1000);
+
+	return;
 }

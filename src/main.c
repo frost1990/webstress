@@ -12,7 +12,6 @@
 long long request_seq = 0;
 long long response_seq = 0;
 struct timeval start;
-struct timeval end;
 
 struct http_request myreq;
 extern hash_conn_t ghash_conn;
@@ -27,6 +26,7 @@ int main(int argc, char* argv[])
 	compose_request_buffer(&myreq);
 
 	int poller_fd = ev_create();
+	gettimeofday(&start, NULL);
 	start_connection(poller_fd, &myreq);
 	ev_run_loop(poller_fd, 100, myreq.ip, myreq.port);
 

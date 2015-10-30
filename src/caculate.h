@@ -5,12 +5,18 @@
 #include <sys/time.h>
 #include <stdint.h>
 
+#include "request.h"
+#include "response.h"
+
 #define STATS_INIT_SIZE 2048
 
+/* Stores send request times, recieve response times, all request-response cost intervals */
 typedef struct stats_t {
-	uint64_t *data;
 	size_t capacity;
 	size_t size;
+	uint64_t total_requests;
+	uint64_t total_responses;
+	uint64_t *data;
 } stats_t;
 
 void stats_init(stats_t* record);
@@ -30,5 +36,8 @@ uint64_t stats_min(stats_t * record);
 long double stats_stddev(stats_t * record);
 
 void stats_sort(stats_t *record);
+
+void stats_summary(http_request *request, stats_t *record);
+
 
 #endif 
