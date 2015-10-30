@@ -156,6 +156,7 @@ void stats_summary(http_request *request, stats_t *record)
 	uint32_t duration = stats_get_interval(&start, &end);
 	double seconds = ((long double)duration) / (1000000.00);
 
+	SCREEN(SCREEN_WHITE, stdout, "=============================Benchmarking terminates now=============================\n\n");
 	SCREEN(SCREEN_YELLOW, stdout, "Total summary\n");
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Duration: %4.2f seconds\n", seconds);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu requests sent, %4.2f requests per second\n", record->total_requests, record->total_requests / seconds);
@@ -187,7 +188,7 @@ void stats_summary(http_request *request, stats_t *record)
 
 void interupt_summary(int signal) 
 {
-    SCREEN(SCREEN_GREEN, stdout, "\nProcess interupted by %s\n\n", strsignal(signal));
+    SCREEN(SCREEN_GREEN, stdout, "\nProgram interupted by %s\n", strsignal(signal));
 	stats_summary(&myreq, &net_record);
 	exit(EXIT_SUCCESS);
 }
