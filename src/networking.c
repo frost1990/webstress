@@ -7,14 +7,17 @@
 #include "ev.h"
 #include "networking.h"
 #include "hash_conn.h"
+#include "caculate.h"
 
 /* Globals */
 extern http_request myreq;
 hash_conn_t ghash_conn;
+stats_t net_record;
 
 int start_connection(int poller_fd, const http_request *request)
 {
 	hash_conn_init(&ghash_conn, request->connections);
+	stats_init(&net_record);
 
 	for (int i = 0; i < request->connections; i++) {
 		int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -62,6 +65,12 @@ int recieve_response(int poller_fd, int fd)
 		}
 	}
 
+	net_record.total_responses++;
+	struct timeval now;
+	gettimeofday(&now, NULL);
+	uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
+
+	stats_add(&net_record, cost);
 	return bytes;
 }
 
@@ -96,6 +105,7 @@ int send_request(int poller_fd, int fd)
 		}	 
 	}
 
+	net_record.total_requests++;
 	/* Record send time */
 	gettimeofday(&(pconn->latest_snd_time), NULL);
 	return offset;

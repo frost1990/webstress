@@ -16,28 +16,31 @@ typedef struct stats_t {
 	size_t size;
 	uint64_t total_requests;
 	uint64_t total_responses;
-	uint64_t *data;
+	uint32_t *data;
 } stats_t;
 
 void stats_init(stats_t* record);
 
-void stats_add(stats_t* record, uint64_t element);
+void stats_add(stats_t* record, uint32_t element);
 
 void stats_resize(stats_t* record);
 
 void stats_free(stats_t* record);
 
-long double stats_avg(stats_t *record);
+uint32_t stats_get_interval(struct timeval *start, struct timeval *end); 
 
-uint64_t stats_max(stats_t *record);
+double stats_avg(stats_t *record);
 
-uint64_t stats_min(stats_t * record);
+uint32_t stats_max(stats_t *record);
 
-long double stats_stddev(stats_t * record);
+uint32_t stats_min(stats_t * record);
+
+double stats_stddev(stats_t * record);
 
 void stats_sort(stats_t *record);
 
 void stats_summary(http_request *request, stats_t *record);
 
+void interupt_summary(int signal);
 
 #endif 

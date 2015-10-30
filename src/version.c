@@ -3,7 +3,7 @@
 
 #include "version.h"
 
-static char *version = "0.001";
+static char *version = "0.010";
 
 void show_version() 
 {
