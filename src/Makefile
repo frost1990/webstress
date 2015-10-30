@@ -5,7 +5,7 @@ CTAGS = ctags
 INCLUDES = -I/usr/local/include -I/usr/include 
 LIBS = -L/usr/local/lib  -L/usr/local/lib 
 ifeq ($(uname_S),Linux)
-	LINK = -lrt 
+	LINK = -lrt -lm
 endif
 CFLAGS = -g -std=gnu99 -Wall -fno-strict-aliasing  -c $(INCLUDES) 
 OFLAGS = $(LIBS) $(LINK)
