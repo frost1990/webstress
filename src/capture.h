@@ -1,8 +1,20 @@
 #ifndef _CAPTURE_
 #define _CAPTURE_
 
+#include <pcap.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 /* Default snap length (maximum bytes per packet to capture) */
 #define SNAP_LEN 1518
+
 
 /* Ethernet headers are always exactly 14 bytes [1] */
 #define SIZE_ETHERNET 14
