@@ -110,15 +110,14 @@ uint64_t stats_min(stats_t * record)
 
 long double stats_stddev(stats_t * record)
 {
-    long double sum = 0.0;
+	long double sum = 0.0;
 	long double avg = stats_avg(record);
-
-    for (int i = 0; i < record->size; i++) {
+	for (int i = 0; i < record->size; i++) {
 		long double element = (long double)record->data[i];
 		sum = + powl(element - avg, 2);
-    }
+	}
 
-    return sqrtl(sum / (record->size));
+	return sqrtl(sum / (record->size));
 }
 
 void stats_sort(stats_t *record) 
