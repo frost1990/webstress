@@ -21,10 +21,14 @@ void stats_resize(stats_t* record);
 
 void stats_free(stats_t* record);
 
-uint64_t stats_avg(stats_t *record);
+long double stats_avg(stats_t *record);
 
 uint64_t stats_max(stats_t *record);
 
 uint64_t stats_min(stats_t * record);
+
+long double stats_stddev(stats_t * record);
+
+void stats_sort(stats_t *record);
 
 #endif 
