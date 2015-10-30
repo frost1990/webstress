@@ -31,3 +31,7 @@ core*
 tags
 webstress
 unittester
+
+# Tmp 
+*.swp
+*.swo
