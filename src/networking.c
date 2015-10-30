@@ -66,7 +66,13 @@ int recieve_response(int poller_fd, int fd)
 }
 
 int send_request(int poller_fd, int fd) 
-{
+{	
+	conn_t *pconn = hash_conn_get(&ghash_conn, fd);
+	if (pconn == NULL) {
+		SCREEN(SCREEN_RED, stderr, "Fatal error, unable find socket %d's recieve buffer\n");
+		exit(EXIT_FAILURE);
+	}
+
 	int offset = 0;
 	char *send_buffer = myreq.send_buffer;
 	int len = strlen(send_buffer);
@@ -89,6 +95,9 @@ int send_request(int poller_fd, int fd)
 			break;
 		}	 
 	}
+
+	/* Record send time */
+	gettimeofday(&(pconn->latest_snd_time), NULL);
 	return offset;
 }
 

@@ -1,12 +1,16 @@
 #ifndef _NETWORKING_H_
 #define _NETWORKING_H_
 
+#include <time.h>
+#include <sys/time.h>
+
 #include "request.h"
 #include "response.h"
 
 #define RECV_BUFFER_SIZE (10 * 1024)
 
 typedef struct conn_t {
+	struct timeval latest_snd_time; 
 	int fd;
 	char *recv_buffer;
 	size_t offset;
