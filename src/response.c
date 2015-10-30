@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "response.h"
 #include "http_parser.h"

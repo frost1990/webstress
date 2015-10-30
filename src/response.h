@@ -1,7 +1,7 @@
 #ifndef _RESPONSE_H_
 #define _RESPONSE_H_
 
-typedef struct http_request_t {
+typedef struct http_response_t {
 	char server[256];
 	char content_type[256];
 	char bodydata[1024];
