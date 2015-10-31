@@ -93,11 +93,9 @@ int is_response_complete(conn_t *pconn, int total_len)
 	int content_length = atoi(content_length_buffer);
 	char *head_end = strstr(pconn->recv_buffer, "\r\n\r\n");
 	if (head_end == NULL) {
+		SCREEN(SCREEN_GREEN, stdout, "cannot find body start\n");
 		pconn->offset = total_len;
-		if (pconn->offset < 0) {
-			printf("Abnormal offset %d\n", pconn->offset);
-		}
-
+		SCREEN(SCREEN_GREEN, stdout, "will exit\n");
 		return -1;
 	}
 	char *body_start = head_end + 4;

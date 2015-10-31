@@ -53,7 +53,7 @@ int recieve_response(int poller_fd, int fd)
 		int ret = recv(fd, recv_buffer + bytes, RECV_BUFFER_SIZE * sizeof(char), 0);
 		if (ret < 0) {
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				SCREEN(SCREEN_YELLOW, stdout, "recv:%s ", strerror(errno));
+				SCREEN(SCREEN_YELLOW, stdout, "recv:%s. ", strerror(errno));
 				break;
 			 } else if (errno == EINTR) {	
 				/* Interupted by a signal */
@@ -75,16 +75,22 @@ int recieve_response(int poller_fd, int fd)
 	int handled_bytes = is_response_complete(pconn, total_bytes);
 	int handled_sum = handled_bytes;
 	printf("handled_bytes %d\n", handled_bytes);
-	while (handled_bytes > 0) {
+
+	while (true) {
 		printf("handled_sum %d\n", handled_sum);
+		handled_bytes = is_response_complete(pconn, total_bytes - handled_sum);
+		if (handled_bytes <= 0) {
+			SCREEN(SCREEN_RED, stdout, "Next round, handled_bytes = %d\n", handled_bytes);
+			break;
+		}
 		net_record.total_responses++;
 		struct timeval now;
 		gettimeofday(&now, NULL);
 		uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
 		stats_add(&net_record, cost);
-		handled_bytes = is_response_complete(pconn, total_bytes - handled_sum);
-		handled_sum += handled_bytes;
+	
 		printf("handled_bytes %d\n", handled_bytes);
+		handled_sum += handled_bytes;
 	}
 	
 	return bytes;
