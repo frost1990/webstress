@@ -76,7 +76,7 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 	pconn->fd = fd;
 	printf("hello: %d %s\n", __LINE__, __FILE__);
 	pconn->recv_buffer = (char *) malloc(RECV_BUFFER_SIZE * sizeof(char));
-	printf("hello: %p %d %s\n", pconn->recv_buffer, __LINE__, __FILE__);
+	hash_conn_debug_show(phash_conn);
 	pconn->offset = 0; 
 	pconn->latest_snd_time.tv_sec = 0;
 	pconn->latest_snd_time.tv_usec = 0;

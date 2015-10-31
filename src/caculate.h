@@ -8,7 +8,7 @@
 #include "request.h"
 #include "response.h"
 
-#define STATS_INIT_SIZE 2048
+#define STATS_INIT_SIZE 10
 
 /* Stores send request times, recieve response times, all request-response cost intervals */
 typedef struct stats_t {

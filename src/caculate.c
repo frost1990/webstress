@@ -77,12 +77,14 @@ void stats_resize(stats_t* record)
 {
 	record->capacity *= 2;
 	printf("hello: %d %s\n", __LINE__, __FILE__);
-	record->data = (uint32_t *)realloc(record->data, (record->capacity) * sizeof(uint32_t));
+	uint32_t *previous_buffer = record->data;
+	record->data = (uint32_t *)realloc(previous_buffer, (record->capacity) * sizeof(uint32_t));
+	stats_vector_debug_show(record);
 	if (record->data == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
 		exit(EXIT_FAILURE);
 	}
-	memset(record->data, 0, record->capacity - record->size);
+	memset(record->data + record->size + 1, 0, record->capacity - record->size);
 }
 
 void stats_free(stats_t* record) 
