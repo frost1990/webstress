@@ -72,9 +72,8 @@ int recieve_response(int poller_fd, int fd)
 	/* On errno = EAGAIN */
 	/*If recieved a complete message, reset offset */
 	int total_bytes = bytes + pconn->offset;
-	int handled_bytes = is_response_complete(pconn, total_bytes);
-	int handled_sum = handled_bytes;
-	printf("handled_bytes %d\n", handled_bytes);
+	int handled_bytes = 0;
+	int handled_sum = 0;
 
 	while (true) {
 		printf("handled_sum %d\n", handled_sum);
