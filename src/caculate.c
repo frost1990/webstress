@@ -4,7 +4,6 @@
 
 #include "caculate.h"
 #include "screen.h"	
-#include "http_status_code.h"	
 
 static struct http_status_code_t status_code_map [] = {
 	{100, "Continue"},
@@ -176,9 +175,22 @@ void stats_free(stats_t* record)
 
 double stats_avg(stats_t *record) 
 {
-	/* FIXME: here may overflow */
 	uint32_t sum = 0;
 	for (int i = 0; i < record->size; i++) {
+		sum += (record->data)[i];
+	}
+
+	return (sum / (long double) record->size);
+}
+
+double stats_navg(stats_t *record, int n) 
+{
+	if (n >= record->size) {
+		return stats_avg(record);
+	}
+
+	uint32_t sum = 0;
+	for (int i = 0; i < n; i++) {
 		sum += (record->data)[i];
 	}
 
@@ -254,6 +266,31 @@ void summary_status_code(uint32_t* array, int length)
 	SCREEN(SCREEN_YELLOW, stdout, "\n");
 }
 
+/* Before call stats_show_percentage(), make sure your record is sorted */
+void stats_show_percentage(stats_t *record)
+{
+	int top10 = record->size * 1 /10;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 1.00 * 100 / 10, stats_navg(record, top10));
+	int top20 = record->size * 2 /10;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 2.00 * 100/ 10, stats_navg(record, top20));
+	int top30 = record->size * 3 /10;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 3.00 * 100/ 10, stats_navg(record, top30));
+	int top40 = record->size * 4 /10;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 4.00 * 100 / 10, stats_navg(record, top40));
+	int top50 = record->size * 5 /10;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 5.00 * 100 / 10, stats_navg(record, top50));
+	int top60 = record->size * 6 /10;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 6.00 * 100 / 10, stats_navg(record, top60));
+	int top70 = record->size * 7 /10;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 6.00 * 100 / 10, stats_navg(record, top70));
+	int top80 = record->size * 8 /10;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 7.00 * 100 / 10, stats_navg(record, top80));
+	int top90 = record->size * 9 /10;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 8.00 * 100 / 10, stats_navg(record, top90));
+	int topall = record->size * 10 /10;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n\n", 9.00 * 100 / 10, stats_navg(record, topall));
+}	
+
 void stats_summary(http_request *request, stats_t *record)
 {
 	struct timeval end;
@@ -283,9 +320,12 @@ void stats_summary(http_request *request, stats_t *record)
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %4.3f ms\n", (double) min / 1000.00);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %4.3f ms\n\n", stddev / 1000.00);
 	
-	SCREEN(SCREEN_YELLOW, stdout, "Percentage of the requests served within a certain time: \n\n");
+	if (record->size >= 100) {
+		SCREEN(SCREEN_YELLOW, stdout, "Cost time percentage distribution:\n");
+		stats_sort(record);	
+		stats_show_percentage(record);	
+	}
 
-	stats_sort(record);	
 	stats_free(record);
 	return;
 }

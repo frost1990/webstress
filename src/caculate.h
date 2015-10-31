@@ -10,6 +10,11 @@
 
 #define STATS_INIT_SIZE 10
 
+typedef struct http_status_code_t {
+	uint32_t  code;
+	char information[256];
+} http_status_code_t;
+
 /* Stores send request times, recieve response times, all request-response cost intervals */
 typedef struct stats_t {
 	size_t capacity;
@@ -31,6 +36,8 @@ uint32_t stats_get_interval(struct timeval *start, struct timeval *end);
 
 double stats_avg(stats_t *record);
 
+double stats_navg(stats_t *record, int n); 
+
 uint32_t stats_max(stats_t *record);
 
 uint32_t stats_min(stats_t * record);
@@ -38,6 +45,9 @@ uint32_t stats_min(stats_t * record);
 double stats_stddev(stats_t * record);
 
 void stats_sort(stats_t *record);
+
+/* Before call stats_show_percentage(), make sure your record is sorted */
+void stats_show_percentage(stats_t *record);	
 
 void stats_vector_debug_show(stats_t *record);
 
