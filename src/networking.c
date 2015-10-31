@@ -85,7 +85,7 @@ int send_request(int poller_fd, int fd)
 {	
 	conn_t *pconn = hash_conn_get(&ghash_conn, fd);
 	if (pconn == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Fatal error, unable find socket %d's recieve buffer\n");
+		SCREEN(SCREEN_RED, stderr, "Fatal error, unable to find socket %d's recieve buffer\n");
 		exit(EXIT_FAILURE);
 	}
 
