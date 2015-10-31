@@ -155,28 +155,29 @@ void stats_summary(http_request *request, stats_t *record)
 	uint32_t duration = stats_get_interval(&start, &end);
 	double seconds = ((long double)duration) / (1000000.00);
 
-	SCREEN(SCREEN_WHITE, stdout, "=============================Benchmarking terminates now=============================\n\n");
-	SCREEN(SCREEN_YELLOW, stdout, "Total summary\n");
+	SCREEN(SCREEN_WHITE, stdout, "=========================================Benchmarking terminates now=========================================\n\n");
+	SCREEN(SCREEN_YELLOW, stdout, "Total summary:\n");
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Duration: %4.2f seconds\n", seconds);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu requests sent, %4.2f requests per second\n", record->total_requests, record->total_requests / seconds);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu responses recieved, %4.2f responses per second\n", record->total_responses, record->total_responses / seconds);
 	double finished = (record->total_responses) ? ((double) record->total_responses/ (double) record->total_requests) : 0;
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percent: %4.2f\%%\n\n", 100 * finished);
 
+	SCREEN(SCREEN_YELLOW, stdout, "Http status code brief:\n\n");
+
 	double avg = stats_avg(record);
 	uint32_t max = stats_max(record);
 	uint32_t min = stats_min(record);
 	double stddev = stats_stddev(record);
 
-	SCREEN(SCREEN_YELLOW, stdout, "Cost time\n");
+	SCREEN(SCREEN_YELLOW, stdout, "Cost time:\n");
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Average: %4.3f ms\n", avg / 1000);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum: %4.3f ms\n", (double) max / 1000.00);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %4.3f ms\n", (double) min / 1000.00);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %4.3f ms\n\n", stddev / 1000.00);
 	
-	SCREEN(SCREEN_YELLOW, stdout, "Percentage of the requests served within a certain time (ms)\n\n");
+	SCREEN(SCREEN_YELLOW, stdout, "Percentage of the requests served within a certain time: \n\n");
 
-	SCREEN(SCREEN_YELLOW, stdout, "Http status code brief\n\n");
 
 	stats_sort(record);	
 	stats_free(record);

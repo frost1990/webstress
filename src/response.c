@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -64,6 +65,7 @@ int on_response(char *recv_buffer, int recv_len, http_response_t *response)
 	}
 
 	response->status_code = parser->status_code;
+	printf("Status_code: %u\n", response->status_code);
 	response->content_length = parser->content_length;
 	get_header_value(recv_buffer, "Server", response->server);
 

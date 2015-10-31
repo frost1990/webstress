@@ -7,6 +7,7 @@
 #include "ev.h"
 #include "networking.h"
 #include "hash_conn.h"
+#include "response.h"
 #include "caculate.h"
 
 /* Globals */
@@ -71,6 +72,9 @@ int recieve_response(int poller_fd, int fd)
 	uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
 
 	stats_add(&net_record, cost);
+	http_response_t response;
+	on_response(recv_buffer, bytes, &response);
+
 	return bytes;
 }
 
