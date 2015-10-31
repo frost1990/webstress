@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
 	int poller_fd = ev_create();
 	gettimeofday(&start, NULL);
-	SCREEN(SCREEN_WHITE, stdout, "=============================Start benchmarking now, press CTRL + C to terminate=============================\n\n");
+	SCREEN(SCREEN_WHITE, stdout, "=============================Start benchmarking now, press CTRL + C to terminate=============================\n");
 	start_connection(poller_fd, &myreq);
 	ev_run_loop(poller_fd, 100, myreq.ip, myreq.port);
 

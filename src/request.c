@@ -156,7 +156,6 @@ int parse_opt(int argc, char **argv, http_request *request)
 
 void compose_request_buffer(http_request* request)
 {
-	printf("hello: %d %s\n", __LINE__, __FILE__);
 	char *buffer = malloc(REQUEST_BUFFER_SIZE * sizeof(char));
 	if (buffer == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate dynamic memory , malloc(3) failed.\n");

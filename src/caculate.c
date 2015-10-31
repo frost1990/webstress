@@ -50,7 +50,6 @@ void stats_init(stats_t* record)
 {
 	record->size = 0;
 	record->capacity = STATS_INIT_SIZE;
-	printf("hello: %d %s\n", __LINE__, __FILE__);
 	record->data = (uint32_t *) malloc(record->capacity * sizeof(uint32_t));
 	record->total_requests = 0;
 	record->total_responses = 0; 
@@ -76,10 +75,8 @@ void stats_add(stats_t* record, uint32_t element)
 void stats_resize(stats_t* record) 
 {
 	record->capacity *= 2;
-	printf("hello: %d %s\n", __LINE__, __FILE__);
 	uint32_t *previous_buffer = record->data;
 	record->data = (uint32_t *)realloc(previous_buffer, (record->capacity) * sizeof(uint32_t));
-	stats_vector_debug_show(record);
 	if (record->data == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
 		exit(EXIT_FAILURE);
@@ -180,8 +177,6 @@ void stats_summary(http_request *request, stats_t *record)
 	SCREEN(SCREEN_YELLOW, stdout, "Percentage of the requests served within a certain time (ms)\n\n");
 
 	SCREEN(SCREEN_YELLOW, stdout, "Http status code brief\n\n");
-
-//	stats_vector_debug_show(record);
 
 	stats_sort(record);	
 	stats_free(record);

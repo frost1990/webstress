@@ -40,7 +40,6 @@ void hash_conn_init(hash_conn_t *phash_conn, int conns)
 	phash_conn->table_size = get_nearest_prime(conns);
 	phash_conn->elenum = 0; 
 
-	printf("hello: %d %s\n", __LINE__, __FILE__);
 	phash_conn->idx_ptr = (bucket_t **) malloc(sizeof(bucket_t *) * phash_conn->table_size);
 
 	if (phash_conn->idx_ptr == NULL) {
@@ -49,7 +48,6 @@ void hash_conn_init(hash_conn_t *phash_conn, int conns)
 	}
 
 	for (int i = 0; i < phash_conn->table_size; i++) {
-		printf("hello: %d %s\n", __LINE__, __FILE__);
 		(phash_conn->idx_ptr)[i] = malloc(sizeof(bucket_t));
 		if ((phash_conn->idx_ptr)[i] == NULL) {
 			SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
@@ -67,16 +65,17 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 {
 	int idx = modhash(fd, phash_conn->table_size);
 	bucket_t *location = (phash_conn->idx_ptr)[idx];
-	printf("hello: %d %s\n", __LINE__, __FILE__);
 	conn_t *pconn = (conn_t *) malloc(sizeof(conn_t));
 	if (pconn == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
 		exit(EXIT_FAILURE);
 	}
 	pconn->fd = fd;
-	printf("hello: %d %s\n", __LINE__, __FILE__);
 	pconn->recv_buffer = (char *) malloc(RECV_BUFFER_SIZE * sizeof(char));
-	hash_conn_debug_show(phash_conn);
+	if (pconn->recv_buffer == NULL) {
+		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
+		exit(EXIT_FAILURE);
+	}
 	pconn->offset = 0; 
 	pconn->latest_snd_time.tv_sec = 0;
 	pconn->latest_snd_time.tv_usec = 0;
@@ -86,10 +85,8 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 	}
 
 	if (location->depth != 0) {
-		printf("hello: %d %s\n", __LINE__, __FILE__);
 		list_conn_add(location, pconn);
 	} else {
-		printf("hello: %d %s\n", __LINE__, __FILE__);
 		location->key = fd;
 		location->val = pconn;
 	}
