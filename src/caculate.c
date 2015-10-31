@@ -282,13 +282,13 @@ void stats_show_percentage(stats_t *record)
 	int top60 = record->size * 6 / 10;
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 6.00 * 100 / 10, stats_navg(record, top60) / 1000);
 	int top70 = record->size * 7 / 10;
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 6.00 * 100 / 10, stats_navg(record, top70) / 1000);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 7.00 * 100 / 10, stats_navg(record, top70) / 1000);
 	int top80 = record->size * 8 / 10;
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 7.00 * 100 / 10, stats_navg(record, top80) / 1000);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 8.00 * 100 / 10, stats_navg(record, top80) / 1000);
 	int top90 = record->size * 9 / 10;
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 8.00 * 100 / 10, stats_navg(record, top90) / 1000);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n", 9.00 * 100 / 10, stats_navg(record, top90) / 1000);
 	int topall = record->size * 10 / 10;
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n\n", 9.00 * 100 / 10, stats_navg(record, topall) / 1000);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Top %4.2f\%%\t%4.3fms\n\n", 10.00 * 100 / 10, stats_navg(record, topall) / 1000);
 }	
 
 void stats_summary(http_request *request, stats_t *record)
