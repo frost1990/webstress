@@ -63,11 +63,16 @@ static uint32_t get_status_code(char *recv_buffer)
 		p++;
 	}
 
+	if (atoi(p) < 100) {
+		SCREEN(SCREEN_YELLOW, stdout, "Abnormal status code %d\n" , atoi(p));
+		printf("%s\n",  p);
+	}
 	return atoi(p);
 }
 
 int on_response(char *recv_buffer, int recv_len, http_response_t *response) 
 {
+	SCREEN(SCREEN_BLUE, stdout, "%s", recv_buffer);
 	char content_length[128] = {0};
 
 	response->status_code = get_status_code(recv_buffer);
