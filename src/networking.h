@@ -5,7 +5,6 @@
 #include <sys/time.h>
 
 #include "request.h"
-#include "response.h"
 
 #define RECV_BUFFER_SIZE (10 * 1024)
 

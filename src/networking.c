@@ -47,7 +47,7 @@ int recieve_response(int poller_fd, int fd)
 		exit(EXIT_FAILURE);
 	}
 
-	char *recv_buffer = pconn->recv_buffer;
+	char *recv_buffer = pconn->recv_buffer + pconn->offset;
 	while (true) {
 		int ret = recv(fd, recv_buffer + bytes, RECV_BUFFER_SIZE * sizeof(char), 0);
 		if (ret < 0) {
@@ -66,14 +66,17 @@ int recieve_response(int poller_fd, int fd)
 		}
 	}
 
-	net_record.total_responses++;
-	struct timeval now;
-	gettimeofday(&now, NULL);
-	uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
+	/* On errno = EAGAIN */
+	/*If recieved a complete message, reset offset */
+	if (is_response_complete(pconn, bytes)) {
+		net_record.total_responses++;
+		struct timeval now;
+		gettimeofday(&now, NULL);
+		uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
 
-	stats_add(&net_record, cost);
-	http_response_t response;
-	on_response(recv_buffer, bytes, &response);
+		stats_add(&net_record, cost);
+	}
+	
 	memset(recv_buffer, 0, RECV_BUFFER_SIZE * sizeof(char));
 	return bytes;
 }

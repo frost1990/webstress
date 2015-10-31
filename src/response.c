@@ -54,7 +54,7 @@ static uint32_t get_status_code(char *recv_buffer)
 	if (recv_buffer == NULL) {
 		return 0;
 	}
-	if (strstr(recv_buffer, "HTTP/") == NULL) {
+	if (strstr(recv_buffer, "HTTP/1.") == NULL) {
 		return 0;
 	}
 
@@ -63,16 +63,14 @@ static uint32_t get_status_code(char *recv_buffer)
 		p++;
 	}
 
-	if (atoi(p) < 100) {
-		SCREEN(SCREEN_YELLOW, stdout, "Abnormal status code %d\n" , atoi(p));
-		printf("%s\n",  p);
-	}
 	return atoi(p);
 }
 
 int on_response(char *recv_buffer, int recv_len, http_response_t *response) 
 {
+	SCREEN(SCREEN_YELLOW, stdout, "New buffer");
 	SCREEN(SCREEN_BLUE, stdout, "%s", recv_buffer);
+	
 	char content_length[128] = {0};
 
 	response->status_code = get_status_code(recv_buffer);
@@ -85,4 +83,28 @@ int on_response(char *recv_buffer, int recv_len, http_response_t *response)
 	}
 
 	return 0;
+}
+
+bool is_response_complete(conn_t *pconn, int recv_len) 
+{
+	char buffer[128] = {0};
+	get_header_value(pconn->recv_buffer, "Content-Length", buffer);
+	int content_length = atoi(buffer);
+	char *head_end = strstr(pconn->recv_buffer, "\r\n\r\n");
+	char *body_start = head_end + 4;
+
+	if (content_length > 0) {
+		if (body_start + content_length - pconn->recv_buffer <= recv_len) {
+			int valid_length = body_start + content_length - pconn->recv_buffer;
+			pconn->offset = recv_len - valid_length;
+			memcpy(pconn->recv_buffer, pconn->recv_buffer + pconn->offset, RECV_BUFFER_SIZE - pconn->offset);	
+			return true;
+		} else {
+			return false;
+		}
+	/* Transfer-Encoding : trunked \r\n */
+	} else {
+
+		return false;
+	}
 }
