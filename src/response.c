@@ -89,6 +89,7 @@ bool is_response_complete(conn_t *pconn, int recv_len)
 {
 	char buffer[128] = {0};
 	get_header_value(pconn->recv_buffer + pconn->offset, "Content-Length", buffer);
+	int status_code = get_status_code(pconn->recv_buffer + pconn->offset);
 	int content_length = atoi(buffer);
 	char *head_end = strstr(pconn->recv_buffer + pconn->offset, "\r\n\r\n");
 	char *body_start = head_end + 4;
@@ -102,7 +103,9 @@ bool is_response_complete(conn_t *pconn, int recv_len)
 			pconn->offset = recv_len - valid_length;
 			memset(pconn->recv_buffer, 0, valid_length);	
 			memcpy(pconn->recv_buffer, pconn->recv_buffer + valid_length, recv_len - valid_length);	
-
+			if (status_code > 0) {
+				g_status_code_map[status_code]++;
+			}
 			return true;
 		} else {
 			return false;
