@@ -306,19 +306,20 @@ void stats_summary(http_request *request, stats_t *record)
 	double finished = (record->total_responses) ? ((double) record->total_responses/ (double) record->total_requests) : 0;
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percent: %4.2f\%%\n\n", 100 * finished);
 
-	SCREEN(SCREEN_YELLOW, stdout, "Http status code brief:\n");
-	summary_status_code(g_status_code_map, 1024);
+	if (record->total_responses > 0) {
+		SCREEN(SCREEN_YELLOW, stdout, "Http status code brief:\n");
+		summary_status_code(g_status_code_map, 1024);
 
-	double avg = stats_avg(record);
-	uint32_t max = stats_max(record);
-	uint32_t min = stats_min(record);
-	double stddev = stats_stddev(record);
-
-	SCREEN(SCREEN_YELLOW, stdout, "Cost time:\n");
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Average: %4.3f ms\n", avg / 1000);
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum: %4.3f ms\n", (double) max / 1000.00);
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %4.3f ms\n", (double) min / 1000.00);
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %4.3f ms\n\n", stddev / 1000.00);
+		double avg = stats_avg(record);
+		uint32_t max = stats_max(record);
+		uint32_t min = stats_min(record);
+		double stddev = stats_stddev(record);
+		SCREEN(SCREEN_YELLOW, stdout, "Cost time:\n");
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Average: %4.3f ms\n", avg / 1000);
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum: %4.3f ms\n", (double) max / 1000.00);
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Mininum: %4.3f ms\n", (double) min / 1000.00);
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Standard Deviation: %4.3f ms\n\n", stddev / 1000.00);
+	}
 	
 	if (record->size >= 100) {
 		SCREEN(SCREEN_YELLOW, stdout, "Cost time percentage distribution:\n");

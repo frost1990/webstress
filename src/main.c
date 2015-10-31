@@ -24,6 +24,7 @@ int main(int argc, char* argv[])
 	SCREEN(SCREEN_GREEN, stdout, "Webstress - A simple web benchmarking tool\nCopyright (c) 2015 frost, simple1115@gmail.com. All rights deserved.\n\n");
 	SCREEN(SCREEN_BLUE, stdout, "This product is under development for the moment, please wait for a while.\nThank you for your support.\n\n");
 
+	gettimeofday(&start, NULL);
 	init_http_request(&myreq);
 	parse_opt(argc, argv, &myreq);
 	compose_request_buffer(&myreq);
