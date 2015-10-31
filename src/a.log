@@ -1,0 +1,1019 @@
+[32mWebstress - A simple web benchmark tool
+Copyright (c) 2015 frost, simple1115@gmail.com. All rights deserved.
+
+[0m[34mThis product is under development for the moment, please wait for a while.
+Thank you for your support.
+
+[0m[33mRequest url:[0m[36m http://qq.com/index
+[0m[33mHost:[0m[36m qq.com
+[0m[33mAddress:[0m[36m 14.17.32.211:[0m[36m80
+[0m[33mYour http request header:
+[0m[32mGET /index HTTP/1.1
+Accept: *
+Host: qq.com
+Connection: keep-alive
+
+[0m[37m=============================Start benchmarking now, press CTRL+C to terminate=============================
+[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+
+0
+
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+
+0
+
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+
+0
+
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+
+0
+
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: ma[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+x-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Se[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+rver: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<bod[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+y bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:4[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+5 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+
+0
+
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+
+0
+
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+
+0
+
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+
+0
+
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+HTTP/1.1 302 Moved Temporarily
+Server: squid/3.4.1
+Date: Sat, 31 Oct 2015 08:29:45 GMT
+Content-Type: text/html
+Transfer-Encoding: chunked
+Connection: keep-alive
+Location: http://www.qq.com/index
+Expires: Sat, 31 Oct 2015 08:31:45 GMT
+Cache-Control: max-age=120
+Vary: Accept-Encoding
+X-Cache: HIT from shenzhen.qq.com
+
+a0
+<html>
+<head><title>302 Found</title></head>
+<body bgcolor="white">
+<center><h1>302 Found</h1></center>
+<hr><center>nginx/1.6.0</center>
+</body>
+</html>
+[0m[37mlength HÀtÿ[0m[33mNewbuffer
+[0m[37mNewbuffer
+
+0
+
+[0m[37mlength HÀtÿ[0m[32m
+Program interupted by Interrupt: 2
+[0m[37m========================================Benchmarking terminates now========================================
+
+[0m[33mTotal summary:
+[0m[36mDuration: 0.42 seconds
+[0m[36m2456 requests sent, 5856.99 requests per second
+[0m[36m0 responses recieved, 0.00 responses per second
+[0m[36mFinished tasks percent: 0.00%
+
+[0m[33mHttp status code brief:
+[0m[33m
+[0m[33mCost time:
+[0m[36mAverage:  nan ms
+[0m[36mMaximum: 0.000 ms
+[0m[36mMininum: 2147483.646 ms
+[0m[36mStandard Deviation:  nan ms
+
+[0m[33mPercentage of the requests served within a certain time: 
+
+[0m

@@ -4,11 +4,95 @@
 
 #include "caculate.h"
 #include "screen.h"	
+#include "http_status_code.h"	
+
+static struct http_status_code_t status_code_map [] = {
+	{100, "Continue"},
+	{101, "Switching Protocols"},	
+	{102, "Processing"},
+
+	{200, "OK"},
+	{201, "Created"},
+	{202, "Accepted"},	
+	{203, "Non-Authoritative Information"},
+	{204, "No Content"},
+	{205, "Reset Content"},
+	{206, "Partial Content"},	
+	{207, "Multi-Status"},
+	{208, "Already Reported"},
+	{226, "IM Used"},
+
+	{300, "Multiple Choices"},	
+	{301, "Moved Permanently"},
+	{302, "Found"},
+	{303, "See Other"},	
+	{304, "Not Modified"},	
+	{305, "Use Proxy"},
+	{306, "(reserviert)"},
+	{307, "Temporary Redirect"},	
+	{308, "Permanent Redirect"},
+
+	{400, "Bad Request"},
+	{401, "Unauthorized"},
+	{402, "Payment Required"},	
+	{403, "Forbidden"},
+	{404, "Not Found"},
+	{405, "Method Not Allowed"},
+	{406, "Not Acceptable"},
+	{407, "Proxy Authentication Required"},	
+	{408, "Request Time-out"},	
+	{409, "Conflict"},	
+	{410, "Gone"},
+	{411, "Length Required"},	
+	{412, "Precondition Failed"},	
+	{413, "Request Entity Too Large"},	
+	{414, "Request-URL Too Long"},	
+	{415, "Unsupported Media Type"},	
+	{416, "Requested"},
+	{417, "Expectation Failed"},
+	{418, "I’m a teapo"},
+	{420, "Policy Not Fulfilled"},	
+	{421, "Misdirected Request"},	
+	{422, "Unprocessable Entity"},	
+	{423, "Locked"},	
+	{424, "Failed Dependency"},	
+	{425, "Unordered Collection"},
+	{426, "Upgrade Required"},
+	{428, "Precondition Required"},	
+	{429, "Too Many Requests"},
+	{431, "Request Header Fields Too Large"},	
+	{444, "No Response"},
+	{449, "The request should be retried after doing the appropriate action"},	
+	{451, "Unavailable For Legal Reasons"},
+	{499, "Client has closed connection"},
+
+	{500, "Internal Server Error"},
+	{501, "Not Implemented"},
+	{502, "Bad Gateway"},	
+	{503, "Service Unavailable"},	
+	{504, "Gateway Time-out"},
+	{505, "HTTP Version not supported"},	
+	{506, "Variant Also Negotiates"},
+	{507, "Insufficient Storage"},
+	{508, "Loop Detected"},
+	{509, "Bandwidth Limit Exceeded"},	
+	{510, "Not Extended"},
+};
 
 extern struct timeval start;
 extern struct http_request myreq;
 extern stats_t net_record;
 extern uint32_t g_status_code_map[1024];
+
+static const char *get_status_code_info(uint32_t code) 
+{
+	for (int i = 0; i < sizeof(status_code_map) / sizeof(http_status_code_t); i++) {
+		if (code == status_code_map[i].code) {
+			return status_code_map[i].information;
+		}
+	}
+	return NULL;
+}
 
 static void quicksort(uint32_t *array, int left, int right) {
 	if (left < right) {
@@ -158,7 +242,12 @@ void summary_status_code(uint32_t* array, int length)
 
 	for (int i = 0; i < length; i++) {
 		if (array[i] != 0) {
-			SCREEN(SCREEN_DARK_GREEN, stdout, "%d\t%4.2f\%%\n", i,  100 * (double)array[i] / (double) sum);
+			const char *info = get_status_code_info(i);
+			if (info != NULL) {	
+				SCREEN(SCREEN_DARK_GREEN, stdout, "%d\t%s\t%4.2f\%%\n", i, info, 100 * (double)array[i] / (double) sum);
+			} else {
+				SCREEN(SCREEN_DARK_GREEN, stdout, "%d\t%4.2f\%%\n", i, 100 * (double)array[i] / (double) sum);
+			}
 		}
 	}
 
