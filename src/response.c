@@ -85,34 +85,50 @@ int on_response(char *recv_buffer, int recv_len, http_response_t *response)
 	return 0;
 }
 
-bool is_response_complete(conn_t *pconn, int recv_len) 
+int is_response_complete(conn_t *pconn, int total_len) 
 {
-	char buffer[128] = {0};
-	get_header_value(pconn->recv_buffer + pconn->offset, "Content-Length", buffer);
-	int status_code = get_status_code(pconn->recv_buffer + pconn->offset);
-	int content_length = atoi(buffer);
-	char *head_end = strstr(pconn->recv_buffer + pconn->offset, "\r\n\r\n");
+	char content_length_buffer[128] = {0};
+	get_header_value(pconn->recv_buffer, "Content-Length", content_length_buffer);
+	int status_code = get_status_code(pconn->recv_buffer);
+	int content_length = atoi(content_length_buffer);
+	char *head_end = strstr(pconn->recv_buffer, "\r\n\r\n");
+	if (head_end == NULL) {
+		pconn->offset = total_len;
+		if (pconn->offset < 0) {
+			printf("Abnormal offset %d\n", pconn->offset);
+		}
+
+		return -1;
+	}
 	char *body_start = head_end + 4;
 
 	if (content_length > 0) {
-		if (body_start + content_length - pconn->recv_buffer <= recv_len) {
+		if (body_start + content_length - pconn->recv_buffer <= total_len) {
 			int valid_length = body_start + content_length - pconn->recv_buffer;
-			SCREEN(SCREEN_WHITE, stdout, "content length %d, recv_len %d, valid_len %d\n",  content_length, recv_len, valid_length);
+			SCREEN(SCREEN_WHITE, stdout, "content length %d, total_len %d, valid_len %d\n",  content_length, total_len, valid_length);
 			/* Process valid data */
 
-			pconn->offset = recv_len - valid_length;
+			/* start -------|------------------|----------------  */ 
+			/*					recv-valid_len					  */
+			/* start -----------------|-------------------------- */ 
 			memset(pconn->recv_buffer, 0, valid_length);	
-			memcpy(pconn->recv_buffer, pconn->recv_buffer + valid_length, recv_len - valid_length);	
+			memcpy(pconn->recv_buffer, pconn->recv_buffer + valid_length, total_len - valid_length);	
+			memset(pconn->recv_buffer + total_len - valid_length, 0, RECV_BUFFER_SIZE - total_len + valid_length);	
+			/* Accumulate http response status code */
 			if (status_code > 0) {
 				g_status_code_map[status_code]++;
 			}
-			return true;
+			return valid_length;
 		} else {
-			return false;
+			pconn->offset = total_len;
+			if (pconn->offset < 0) {
+				printf("Abnormal offset %d\n", pconn->offset);
+
+			}
+			return -1;
 		}
 	/* Transfer-Encoding : trunked \r\n */
 	} else {
-
-		return false;
+		return -1;
 	}
 }

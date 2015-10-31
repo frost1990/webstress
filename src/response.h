@@ -16,6 +16,6 @@ typedef struct http_response_t {
 
 int on_response(char *recv_buffer, int recv_len, http_response_t *response);
 
-bool is_response_complete(conn_t *pconn, int recv_len);
+int is_response_complete(conn_t *pconn, int total_len);
 
 #endif

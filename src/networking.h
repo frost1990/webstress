@@ -6,13 +6,13 @@
 
 #include "request.h"
 
-#define RECV_BUFFER_SIZE (10 * 1024)
+#define RECV_BUFFER_SIZE (100 * 1024)
 
 typedef struct conn_t {
 	struct timeval latest_snd_time; 
 	int fd;
 	char *recv_buffer;
-	size_t offset;
+	int offset;
 } conn_t;
 
 int start_connection(int poller_fd, const http_request *request);

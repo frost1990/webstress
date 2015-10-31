@@ -48,11 +48,12 @@ int recieve_response(int poller_fd, int fd)
 	}
 
 	char *recv_buffer = pconn->recv_buffer + pconn->offset;
-	printf("offset = %lu\n", pconn->offset);
+	SCREEN(SCREEN_BLUE, stdout, "offset = %d\n", pconn->offset);
 	while (true) {
 		int ret = recv(fd, recv_buffer + bytes, RECV_BUFFER_SIZE * sizeof(char), 0);
 		if (ret < 0) {
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
+				SCREEN(SCREEN_YELLOW, stdout, "recv:%s ", strerror(errno));
 				break;
 			 } else if (errno == EINTR) {	
 				/* Interupted by a signal */
@@ -67,18 +68,25 @@ int recieve_response(int poller_fd, int fd)
 		}
 	}
 
+	SCREEN(SCREEN_YELLOW, stdout, "New bytes %d\n", bytes);
 	/* On errno = EAGAIN */
 	/*If recieved a complete message, reset offset */
-	if (is_response_complete(pconn, bytes)) {
+	int total_bytes = bytes + pconn->offset;
+	int handled_bytes = is_response_complete(pconn, total_bytes);
+	int handled_sum = handled_bytes;
+	printf("handled_bytes %d\n", handled_bytes);
+	while (handled_bytes > 0) {
+		printf("handled_sum %d\n", handled_sum);
 		net_record.total_responses++;
 		struct timeval now;
 		gettimeofday(&now, NULL);
 		uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
-
 		stats_add(&net_record, cost);
+		handled_bytes = is_response_complete(pconn, total_bytes - handled_sum);
+		handled_sum += handled_bytes;
+		printf("handled_bytes %d\n", handled_bytes);
 	}
 	
-	memset(recv_buffer, 0, RECV_BUFFER_SIZE * sizeof(char));
 	return bytes;
 }
 
@@ -86,7 +94,7 @@ int send_request(int poller_fd, int fd)
 {	
 	conn_t *pconn = hash_conn_get(&ghash_conn, fd);
 	if (pconn == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Fatal error, unable to find socket %d's recieve buffer\n");
+		SCREEN(SCREEN_RED, stderr, "Fatal error, unable to find socket %d's recieve buffer\n", fd);
 		exit(EXIT_FAILURE);
 	}
 

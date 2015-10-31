@@ -24,8 +24,8 @@ int sk_set_rcv_timeout(int fd, int tv_sec, int tv_usec);
 /* Only works in block mode */
 int sk_set_snd_timeout(int fd, int tv_sec, int tv_usec);
 
-int sk_set_rcv_buffer(size_t size, int fd);
-int sk_set_snd_buffer(size_t size, int fd);
+int sk_set_rcv_buffer(int fd, size_t size);
+int sk_set_snd_buffer(int fd, size_t size);
 int sk_get_rcv_buffer(int fd);
 int sk_get_snd_buffer(int fd);
 

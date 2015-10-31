@@ -28,17 +28,17 @@ int sk_set_snd_timeout(int fd, int tv_sec, int tv_usec)
 	return setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
 }
 
-int sk_set_rcvbuffer(int fd, size_t size)
+int sk_set_rcv_buffer(int fd, size_t size)
 {
 	return setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &size, 4);
 }
 
-int sk_set_sndbuffer(int fd, size_t size) 
+int sk_set_snd_buffer(int fd, size_t size) 
 {
 	return setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &size, 4);
 }
 
-int sk_get_rcvbuffer(int fd) 
+int sk_get_rcv_buffer(int fd) 
 {
 	int size;
 	int len = sizeof(size);
@@ -49,7 +49,7 @@ int sk_get_rcvbuffer(int fd)
 	return size;
 }
 
-int sk_get_sndbuffer(int fd) 
+int sk_get_snd_buffer(int fd) 
 {
 	int size;
 	int len = sizeof(size);
