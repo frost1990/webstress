@@ -8,6 +8,7 @@
 extern struct timeval start;
 extern struct http_request myreq;
 extern stats_t net_record;
+extern uint32_t g_status_code_map[1024];
 
 static void quicksort(uint32_t *array, int left, int right) {
 	if (left < right) {
@@ -148,6 +149,22 @@ void stats_vector_debug_show(stats_t *record)
 
 }
 
+void summary_status_code(uint32_t* array, int length) 
+{
+	uint32_t sum = 0;
+	for (int i = 0; i < length; i++) {
+		sum += array[i];
+	}
+
+	for (int i = 0; i < length; i++) {
+		if (array[i] != 0) {
+			SCREEN(SCREEN_DARK_GREEN, stdout, "%d\t%4.2f\%%\n", i,  100 * (double)array[i] / (double) sum);
+		}
+	}
+
+	SCREEN(SCREEN_YELLOW, stdout, "\n");
+}
+
 void stats_summary(http_request *request, stats_t *record)
 {
 	struct timeval end;
@@ -163,7 +180,8 @@ void stats_summary(http_request *request, stats_t *record)
 	double finished = (record->total_responses) ? ((double) record->total_responses/ (double) record->total_requests) : 0;
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percent: %4.2f\%%\n\n", 100 * finished);
 
-	SCREEN(SCREEN_YELLOW, stdout, "Http status code brief:\n\n");
+	SCREEN(SCREEN_YELLOW, stdout, "Http status code brief:\n");
+	summary_status_code(g_status_code_map, 1024);
 
 	double avg = stats_avg(record);
 	uint32_t max = stats_max(record);
@@ -178,7 +196,6 @@ void stats_summary(http_request *request, stats_t *record)
 	
 	SCREEN(SCREEN_YELLOW, stdout, "Percentage of the requests served within a certain time: \n\n");
 
-
 	stats_sort(record);	
 	stats_free(record);
 	return;
@@ -186,7 +203,7 @@ void stats_summary(http_request *request, stats_t *record)
 
 void interupt_summary(int signal) 
 {
-    SCREEN(SCREEN_GREEN, stdout, "\nProgram interupted by %s\n", strsignal(signal));
+	SCREEN(SCREEN_GREEN, stdout, "\nProgram interupted by %s\n", strsignal(signal));
 	stats_summary(&myreq, &net_record);
 	exit(EXIT_SUCCESS);
 }

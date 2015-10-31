@@ -5,9 +5,11 @@
 #include <ctype.h>
 
 #include "response.h"
-#include "http_parser.h"
+#include "screen.h"
 
 #define IS_ENDLINE(p) (*p == '\r' || *p == '\n')
+
+uint32_t g_status_code_map[1024] = {0};
 
 static void get_header_value(const char *recv_buffer, const char *header, char *store) 
 {
@@ -17,6 +19,7 @@ static void get_header_value(const char *recv_buffer, const char *header, char *
 	char *line_start = strstr(recv_buffer, header);
 	
 	if (line_start != NULL) {
+		p = line_start;
 		while (!IS_ENDLINE(p) && *p != ':') {
 			p++;
 		}
@@ -46,29 +49,35 @@ static void get_header_value(const char *recv_buffer, const char *header, char *
 	return;
 }
 
-int on_response(char *recv_buffer, int recv_len, http_response_t *response) 
+static uint32_t get_status_code(char *recv_buffer) 
 {
-	http_parser_settings settings;
-	size_t nparsed = 0;
-
-	http_parser *parser = (http_parser *) malloc(sizeof(http_parser));
-	http_parser_init(parser, HTTP_RESPONSE);
-
-	nparsed = http_parser_execute(parser, &settings, recv_buffer, recv_len);
-
-	if (parser->upgrade) {
-	/* Handle new protocol */
-	} else if (nparsed != recv_len) {
-	/* Handle error. Usually just close the connection. */
-		free(parser);
-		return -1;
+	if (recv_buffer == NULL) {
+		return 0;
+	}
+	if (strstr(recv_buffer, "HTTP/") == NULL) {
+		return 0;
 	}
 
-	response->status_code = parser->status_code;
-	printf("Status_code: %u\n", response->status_code);
-	response->content_length = parser->content_length;
-	get_header_value(recv_buffer, "Server", response->server);
+	char *p = recv_buffer;
+	while (!isspace(*p)) {
+		p++;
+	}
 
-	free(parser);
+	return atoi(p);
+}
+
+int on_response(char *recv_buffer, int recv_len, http_response_t *response) 
+{
+	char content_length[128] = {0};
+
+	response->status_code = get_status_code(recv_buffer);
+	get_header_value(recv_buffer, "Server", response->server);
+	get_header_value(recv_buffer, "Content-Length", content_length);
+	response->content_length = atoi(content_length);
+
+	if (response->status_code) {
+		g_status_code_map[response->status_code]++;
+	}
+
 	return 0;
 }
