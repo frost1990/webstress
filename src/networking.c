@@ -48,6 +48,7 @@ int recieve_response(int poller_fd, int fd)
 	}
 
 	char *recv_buffer = pconn->recv_buffer + pconn->offset;
+	printf("offset = %lu\n", pconn->offset);
 	while (true) {
 		int ret = recv(fd, recv_buffer + bytes, RECV_BUFFER_SIZE * sizeof(char), 0);
 		if (ret < 0) {
