@@ -38,6 +38,8 @@ double stats_avg(stats_t *record);
 
 double stats_navg(stats_t *record, int n); 
 
+double stats_navg2(stats_t *record, int m, int n); 
+
 uint32_t stats_max(stats_t *record);
 
 uint32_t stats_min(stats_t * record);
