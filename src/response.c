@@ -59,12 +59,13 @@ static uint32_t get_status_code(char *recv_buffer)
 	if (recv_buffer == NULL) {
 		return 0;
 	}
-	if (strstr(recv_buffer, "HTTP/1.") == NULL) {
+
+	char *p = strstr(recv_buffer, "HTTP/1.");
+	if (p == NULL) {
 		return 0;
 	}
 
-	char *p = recv_buffer;
-	while (!isspace(*p)) {
+	while (!isspace(*p) && *p != '\0') {
 		p++;
 	}
 	if (*p == '\0') {

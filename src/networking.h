@@ -6,7 +6,7 @@
 
 #include "request.h"
 
-#define RECV_BUFFER_SIZE (100 * 1024)
+#define RECV_BUFFER_SIZE (150 * 1024)
 
 typedef struct conn_t {
 	struct timeval latest_snd_time; 
