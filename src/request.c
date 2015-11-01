@@ -55,7 +55,7 @@ void init_http_request(http_request *request)
 
 void parse_cli(int argc, char **argv, http_request *request) {
 	int ch;                     
-	while ((ch = getopt(argc, argv, "c:d:H:hm:pt:v")) != -1) {
+	while ((ch = getopt(argc, argv, "c:d:fH:hm:p:t:v")) != -1) {
 		switch(ch) {
 			case 'c':
 				if (atoi(optarg) < 1) {
@@ -73,6 +73,9 @@ void parse_cli(int argc, char **argv, http_request *request) {
 				request->method= POST; 
 				strncpy(request->bodydata, optarg, 1024);
 				break;
+			case 'f':
+				request->pipelining = true;
+				break;
 			case 'H':
 				request->additional_header = optarg;
 				break;
@@ -87,7 +90,16 @@ void parse_cli(int argc, char **argv, http_request *request) {
 				request->duration = 60 * atoi(optarg);
 				break;
 			case 'p':
-				request->pipelining = true;
+				if (atoi(optarg) < 1) {
+					SCREEN(SCREEN_RED, stderr, "Invalid port number.\n");
+					exit(EXIT_FAILURE);	
+				} 
+
+				if (atoi(optarg) > 65535) {
+					SCREEN(SCREEN_RED, stderr, "Invalid port number.\n");
+					exit(EXIT_FAILURE);	
+				}
+				request->port = atoi(optarg);
 				break;
 			case 't':
 				if (atoi(optarg) < 1) {
