@@ -106,6 +106,10 @@ int is_response_complete(conn_t *pconn, int total_len)
 		return -1;
 	}
 	char *body_start = head_end + 4;
+	if (*body_start == '\0') {
+		pconn->offset = total_len;
+		return -1;
+	}
 
 	if (content_length > 0) {
 		if (body_start + content_length - pconn->recv_buffer <= total_len) {
@@ -127,8 +131,37 @@ int is_response_complete(conn_t *pconn, int total_len)
 			pconn->offset = total_len;
 			return -1;
 		}
-	/* Transfer-Encoding : trunked \r\n */
+	} else if (strstr(pconn->recv_buffer, "Transfer-Encoding") != 0) {
+		/* Transfer-Encoding : trunked \r\n */
+		char hex_len[128] = {0};
+		char *p = body_start;
+		while (!isspace(*p) && *p != '\0') {
+			p++;
+		}
+
+		if (*p == '\0') {
+			pconn->offset = total_len;
+			return -1; 
+		}	
+		strncpy(hex_len, body_start, p - body_start + 1);
+		int body_length = strtoul(hex_len, NULL, 16) ;
+		if ((body_length > 0) && (body_start + body_length - pconn->recv_buffer <= total_len)) {
+			int valid_length = body_start + body_length - pconn->recv_buffer;
+			memset(pconn->recv_buffer, 0, valid_length);	
+			memcpy(pconn->recv_buffer, pconn->recv_buffer + valid_length, total_len - valid_length);	
+			memset(pconn->recv_buffer + total_len - valid_length, 0, RECV_BUFFER_SIZE - total_len + valid_length);	
+			/* Accumulate http response status code */
+			if (status_code > 0) {
+				g_status_code_map[status_code]++;
+			}
+			return valid_length;
+
+		} else {
+			pconn->offset = total_len;
+			return -1;
+		}
 	} else {
+		/* Insufficent header length, unable to parse, wait for next recv(2) round for more new data */
 		return -1;
 	}
 }
