@@ -68,6 +68,9 @@ void parse_cli(int argc, char **argv, http_request *request) {
 					exit(EXIT_FAILURE);	
 				}
 				request->connections = atoi(optarg);
+
+				SCREEN(SCREEN_YELLOW, stdout, "TCP connections:\t");
+				SCREEN(SCREEN_DARK_GREEN, stdout, "%d\n", request->connections);
 				break;
 			case 'd':
 				request->method= POST; 
@@ -90,15 +93,11 @@ void parse_cli(int argc, char **argv, http_request *request) {
 				request->duration = 60 * atoi(optarg);
 				break;
 			case 'p':
-				if (atoi(optarg) < 1) {
+				if (atoi(optarg) < 1 || atoi(optarg) > 65535) {
 					SCREEN(SCREEN_RED, stderr, "Invalid port number.\n");
 					exit(EXIT_FAILURE);	
 				} 
 
-				if (atoi(optarg) > 65535) {
-					SCREEN(SCREEN_RED, stderr, "Invalid port number.\n");
-					exit(EXIT_FAILURE);	
-				}
 				request->port = atoi(optarg);
 				break;
 			case 't':
@@ -155,10 +154,10 @@ int parse_opt(int argc, char **argv, http_request *request)
 		SCREEN(SCREEN_RED, stderr, "Could not resolve host: %s\n", request->host);
 		exit(EXIT_FAILURE);
 	}
-	SCREEN(SCREEN_YELLOW, stdout, "Host:");
-	SCREEN(SCREEN_DARK_GREEN, stdout, " %s\n", request->host);
-	SCREEN(SCREEN_YELLOW, stdout, "Address:");
-	SCREEN(SCREEN_DARK_GREEN, stdout, " %s:", ipstr);
+	SCREEN(SCREEN_YELLOW, stdout, "Host:\t\t\t");
+	SCREEN(SCREEN_DARK_GREEN, stdout, "%s\n", request->host);
+	SCREEN(SCREEN_YELLOW, stdout, "Address:\t\t");
+	SCREEN(SCREEN_DARK_GREEN, stdout, "%s:", ipstr);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%d\n", request->port);
 	request->port = PORT_HTTP; 
 	request->method = GET;
@@ -223,7 +222,7 @@ void compose_request_buffer(http_request* request)
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
 	offset += bytes;
 
-	SCREEN(SCREEN_YELLOW, stdout, "Your http request header:\n");
+	SCREEN(SCREEN_YELLOW, stdout, "Http request header:\n");
 	SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
 
 	/* Body starts */

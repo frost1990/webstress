@@ -79,8 +79,8 @@ int parse_url(const char *url, struct http_parser_url *u, http_request *request)
 	} else {
 		snprintf(real_url, 1024, "%s", url);
 	}
-	SCREEN(SCREEN_YELLOW, stdout, "Request url:");
-	SCREEN(SCREEN_DARK_GREEN, stdout, " %s\n", real_url);
+	SCREEN(SCREEN_YELLOW, stdout, "Request url:\t\t");
+	SCREEN(SCREEN_DARK_GREEN, stdout, "%s\n", real_url);
 
 	int url_len = strlen(real_url);
 	int ret = http_parser_parse_url(real_url, url_len, 0, u);
