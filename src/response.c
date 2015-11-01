@@ -67,6 +67,9 @@ static uint32_t get_status_code(char *recv_buffer)
 	while (!isspace(*p)) {
 		p++;
 	}
+	if (*p == '\0') {
+		return 0; 
+	}
 
 	return atoi(p);
 }
