@@ -48,12 +48,10 @@ int recieve_response(int poller_fd, int fd)
 	}
 
 	char *recv_buffer = pconn->recv_buffer + pconn->offset;
-	SCREEN(SCREEN_BLUE, stdout, "offset = %d\n", pconn->offset);
 	while (true) {
 		int ret = recv(fd, recv_buffer + bytes, RECV_BUFFER_SIZE * sizeof(char), 0);
 		if (ret < 0) {
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				SCREEN(SCREEN_YELLOW, stdout, "recv:%s. ", strerror(errno));
 				break;
 			 } else if (errno == EINTR) {	
 				/* Interupted by a signal */
@@ -68,7 +66,6 @@ int recieve_response(int poller_fd, int fd)
 		}
 	}
 
-	SCREEN(SCREEN_YELLOW, stdout, "New bytes %d\n", bytes);
 	/* On errno = EAGAIN */
 	/*If recieved a complete message, reset offset */
 	int total_bytes = bytes + pconn->offset;
@@ -76,10 +73,8 @@ int recieve_response(int poller_fd, int fd)
 	int handled_sum = 0;
 
 	while (true) {
-		printf("handled_sum %d\n", handled_sum);
 		handled_bytes = is_response_complete(pconn, total_bytes - handled_sum);
 		if (handled_bytes <= 0) {
-			SCREEN(SCREEN_RED, stdout, "Next round, handled_bytes = %d\n", handled_bytes);
 			break;
 		}
 		net_record.total_responses++;
@@ -88,7 +83,6 @@ int recieve_response(int poller_fd, int fd)
 		uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
 		stats_add(&net_record, cost);
 	
-		printf("handled_bytes %d\n", handled_bytes);
 		handled_sum += handled_bytes;
 	}
 	

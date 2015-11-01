@@ -39,9 +39,14 @@ static void get_header_value(const char *recv_buffer, const char *header, char *
 		}
 		start = p;
 
-		while (!isspace(*p)) {
+		/*Content-Length : 400 */
+		while (!isspace(*p) && *p != '\0') {
 			p++;
 		}
+		if (*p == '\0') {
+			return; 
+		}
+
 		end = p - 1;
 		strncpy(store, start, end - start + 1);
 	}
@@ -93,9 +98,7 @@ int is_response_complete(conn_t *pconn, int total_len)
 	int content_length = atoi(content_length_buffer);
 	char *head_end = strstr(pconn->recv_buffer, "\r\n\r\n");
 	if (head_end == NULL) {
-		SCREEN(SCREEN_GREEN, stdout, "cannot find body start\n");
 		pconn->offset = total_len;
-		SCREEN(SCREEN_GREEN, stdout, "will exit\n");
 		return -1;
 	}
 	char *body_start = head_end + 4;
@@ -103,7 +106,6 @@ int is_response_complete(conn_t *pconn, int total_len)
 	if (content_length > 0) {
 		if (body_start + content_length - pconn->recv_buffer <= total_len) {
 			int valid_length = body_start + content_length - pconn->recv_buffer;
-			SCREEN(SCREEN_WHITE, stdout, "content length %d, total_len %d, valid_len %d\n",  content_length, total_len, valid_length);
 			/* Process valid data */
 
 			/* start -------|------------------|----------------  */ 
@@ -119,10 +121,6 @@ int is_response_complete(conn_t *pconn, int total_len)
 			return valid_length;
 		} else {
 			pconn->offset = total_len;
-			if (pconn->offset < 0) {
-				printf("Abnormal offset %d\n", pconn->offset);
-
-			}
 			return -1;
 		}
 	/* Transfer-Encoding : trunked \r\n */
