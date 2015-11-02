@@ -76,7 +76,7 @@ int ev_check_so_error(int fd)
 			exit(EXIT_FAILURE);
 		}
 	}
-	return 0;
+	return error;
 }
 
 /* Start a event loop */
@@ -114,22 +114,11 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 				
 				ev_modify_event(poller_fd, fd, EVENT_WRITE); 
 			} else if (events[i].events & EPOLLOUT) {
-				int error = sk_check_so_error(fd);
-				if (error != 0) {
-					char src_ip[128] = {0};	
-					char dst_ip[128] = {0};	
-					int src_port = 0;	
-					sk_getsockname(fd, src_ip, 128, &src_port);
-					sk_ipv4_tostr(ip, dst_ip, 128);
-					SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d to %s:%d): %s\n", src_ip, src_port, dst_ip, port, strerror(error));
-					if (error == ECONNREFUSED) {
-						exit(EXIT_FAILURE);
-					}
+				if (ev_check_so_error(fd) != 0) {
 					close_connection(poller_fd, fd);
 					reconnect(poller_fd, ip, port);
 					continue;
 				}
-
 				int ret = send_request(poller_fd, fd);
 				if (ret <= 0) {
 					close_connection(poller_fd, fd);
