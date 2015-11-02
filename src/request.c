@@ -159,8 +159,6 @@ int parse_opt(int argc, char **argv, http_request *request)
 	SCREEN(SCREEN_YELLOW, stdout, "Address:\t\t");
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%s:", ipstr);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%d\n", request->port);
-	request->port = PORT_HTTP; 
-	request->method = GET;
 
 	return 0;
 }
