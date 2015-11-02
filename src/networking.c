@@ -76,20 +76,16 @@ int recieve_response(int poller_fd, int fd)
 	parser.data = pconn;
 	int total_bytes = bytes + pconn->offset;
 	int nparsed = http_parser_execute(&parser, &parser_settings, pconn->recv_buffer, total_bytes);
-	printf("total_bytes, %d, nparsed %d\n", total_bytes, nparsed);
-
-	if (parser.upgrade) {
-		/* Handle new protocol */
-	} 
+	printf("offset=%d\trecv_bytes=%d\ttotal_bytes=%d\tnparsed=%d\n", pconn->offset, bytes, total_bytes, nparsed);
 
 	/* start -------|------------------|----------------  */ 
 	/*					recv-valid_len					  */
 	/* start -----------------|-------------------------- */ 
 	int valid_length = nparsed;
-	memset(pconn->recv_buffer, 0, valid_length);	
-	memcpy(pconn->recv_buffer, pconn->recv_buffer + valid_length, total_bytes - valid_length);	
-	memset(pconn->recv_buffer + total_bytes - valid_length, 0, RECV_BUFFER_SIZE - total_bytes + valid_length);	
-	pconn->offset = total_bytes - valid_length;
+	memset(pconn->recv_buffer, 0, nparsed);	
+	memcpy(pconn->recv_buffer, pconn->recv_buffer + valid_length, total_bytes - nparsed);	
+	memset(pconn->recv_buffer + total_bytes - nparsed, 0, RECV_BUFFER_SIZE - total_bytes + nparsed);	
+	pconn->offset = total_bytes - nparsed;
 
 	return bytes;
 }
@@ -164,8 +160,6 @@ void free_conn_rcv_buffer(conn_t *pconn)
 int response_complete(http_parser *parser) 
 {
 	conn_t *pconn = parser->data;
-	/* Record the lastest parsed bytes of a complete http response message */
-	pconn->parsed_bytes = parser->nread; 
 
 	uint32_t status_code = parser->status_code;
 	g_status_code_map[status_code]++;
@@ -175,7 +169,7 @@ int response_complete(http_parser *parser)
 	uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
 	stats_add(&net_record, cost);
 
-	http_parser_init(parser, HTTP_RESPONSE);
 
 	return 0;
 }
+

@@ -95,24 +95,27 @@ int parse_url(const char *url, struct http_parser_url *u, http_request *request)
 			continue;
 		}
 		switch (i) {
-			case 0:
+			case UF_SCHEMA:
 				snprintf(request->scheme, 16, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				break;
-			case 1:
+			case UF_HOST:
 				snprintf(request->host, 256, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				break;
-			case 2:
+			case UF_PORT:
 				snprintf(strport, 64, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				request->port = atoi(strport);
 				break;
-			case 3:
+			case UF_PATH:
 				snprintf(request->path, 256, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				break;
-			case 4:
+			case UF_QUERY:
 				snprintf(request->querystring, 1024, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				break;
-			case 5:
+			case UF_FRAGMENT:
 				snprintf(request->fragment, 256, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
+				break;
+			case UF_USERINFO:
+				snprintf(request->userinfo, 256, "%.*s", u->field_data[i].len, real_url + u->field_data[i].off);
 				break;
 			default:
 				break;
