@@ -71,21 +71,19 @@ int recieve_response(int poller_fd, int fd)
 		}
 	}
 
-	http_parser parser;
-	http_parser_init(&parser, HTTP_RESPONSE);
-	parser.data = pconn;
+	http_parser parser = pconn->parser;
 	int total_bytes = bytes + pconn->offset;
-	int nparsed = http_parser_execute(&parser, &parser_settings, pconn->recv_buffer, total_bytes);
-	printf("offset=%d\trecv_bytes=%d\ttotal_bytes=%d\tnparsed=%d\n", pconn->offset, bytes, total_bytes, nparsed);
-
-	/* start -------|------------------|----------------  */ 
-	/*					recv-valid_len					  */
-	/* start -----------------|-------------------------- */ 
-	int valid_length = nparsed;
-	memset(pconn->recv_buffer, 0, nparsed);	
-	memcpy(pconn->recv_buffer, pconn->recv_buffer + valid_length, total_bytes - nparsed);	
-	memset(pconn->recv_buffer + total_bytes - nparsed, 0, RECV_BUFFER_SIZE - total_bytes + nparsed);	
-	pconn->offset = total_bytes - nparsed;
+	int nparsed = http_parser_execute(&parser, &parser_settings, pconn->recv_buffer + pconn->offset, total_bytes);
+	if (nparsed != 0) {
+		/* start -------|------------------|----------------  */ 
+		/*					recv-valid_len					  */
+		/* start -----------------|-------------------------- */ 
+		memcpy(pconn->recv_buffer, pconn->recv_buffer + nparsed, total_bytes - nparsed);	
+		memset(pconn->recv_buffer + total_bytes - nparsed, 0, RECV_BUFFER_SIZE - total_bytes + nparsed);	
+		pconn->offset = total_bytes - nparsed;	
+	} else {
+		pconn->offset = total_bytes - nparsed;	
+	}
 
 	return bytes;
 }
@@ -168,7 +166,6 @@ int response_complete(http_parser *parser)
 	gettimeofday(&now, NULL);
 	uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
 	stats_add(&net_record, cost);
-
 
 	return 0;
 }

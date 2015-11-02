@@ -80,6 +80,8 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 	pconn->parsed_bytes = 0; 
 	pconn->latest_snd_time.tv_sec = 0;
 	pconn->latest_snd_time.tv_usec = 0;
+	http_parser_init(&(pconn->parser), HTTP_RESPONSE);
+	(pconn->parser).data = pconn;
 	if (pconn->recv_buffer == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
 		exit(EXIT_FAILURE);

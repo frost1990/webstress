@@ -7,7 +7,7 @@
 #include "request.h"
 #include "http_parser.h"
 
-#define RECV_BUFFER_SIZE (150 * 1024)
+#define RECV_BUFFER_SIZE (3 * 1024 * 1024)
 
 typedef struct conn_t {
 	struct timeval latest_snd_time; 
@@ -15,6 +15,7 @@ typedef struct conn_t {
 	char *recv_buffer;
 	int offset;
 	int parsed_bytes;
+	http_parser parser;
 } conn_t;
 
 int start_connection(int poller_fd, const http_request *request);
