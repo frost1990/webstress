@@ -68,7 +68,8 @@ int recieve_response(int poller_fd, int fd)
 				int dst_port = 0;	
 				sk_getsockname(fd, src_ip, 128, &src_port);
 				sk_getpeername(fd, dst_ip, 128, &dst_port);
-				SCREEN(SCREEN_RED, stderr, "Recieve message error(from %s:%d to %s:%d): %s\n", src_ip, src_port, dst_ip, dst_port, strerror(errno));
+				SCREEN(SCREEN_RED, stderr, "Recieve message error(from %s:%d to %s:%d): %s, %p, offset %d\n", src_ip, src_port, dst_ip, dst_port, 
+								strerror(errno), pconn->recv_buffer, pconn->offset);
 				return -1;
 			}
 		} else if (ret == 0) {
@@ -81,6 +82,7 @@ int recieve_response(int poller_fd, int fd)
 	http_parser parser = pconn->parser;
 	int total_bytes = bytes + pconn->offset;
 	int nparsed = http_parser_execute(&parser, &parser_settings, pconn->recv_buffer + pconn->offset, total_bytes);
+	SCREEN(SCREEN_YELLOW, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s\n", bytes, pconn->offset, total_bytes, nparsed, http_errno_name(parser.http_errno));
 	if (nparsed != 0) {
 		/* start -------|------------------|----------------  */ 
 		/*					recv-valid_len					  */
@@ -88,10 +90,7 @@ int recieve_response(int poller_fd, int fd)
 		memcpy(pconn->recv_buffer, pconn->recv_buffer + nparsed, total_bytes - nparsed);	
 		memset(pconn->recv_buffer + total_bytes - nparsed, 0, RECV_BUFFER_SIZE - total_bytes + nparsed);	
 		pconn->offset = total_bytes - nparsed;	
-	} else {
-		pconn->offset = total_bytes - nparsed;	
 	}
-
 	return bytes;
 }
 
@@ -164,6 +163,7 @@ void free_conn_rcv_buffer(conn_t *pconn)
 
 int response_complete(http_parser *parser) 
 {
+	SCREEN(SCREEN_BLUE, stdout, "on_message_complete\n");
 	conn_t *pconn = parser->data;
 
 	uint32_t status_code = parser->status_code;
