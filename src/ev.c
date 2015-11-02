@@ -1,8 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <sys/time.h>
 #include <errno.h>
 
 #include "ev.h"
+#include "screen.h"
 #include "timer.h"
 #include "networking.h"
 #include "sknet.h"
@@ -80,6 +83,25 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 				close_connection(poller_fd, fd);
 				reconnect(poller_fd, ip, port);
 				continue;
+			} else if (events[i].events & EPOLLERR) {
+				int error = sk_check_so_error(fd);
+				if (error != 0) {
+					char src_ip[128] = {0};	
+					char dst_ip[128] = {0};	
+					int src_port = 0;	
+					sk_getsockname(fd, src_ip, 128, &src_port);
+					sk_ipv4_tostr(ip, dst_ip, 128);
+					SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d to %s:%d): %s\n", src_ip, src_port, dst_ip, port, strerror(error));
+					if (error == ECONNREFUSED) {
+						exit(EXIT_FAILURE);
+					}
+					close_connection(poller_fd, fd);
+					reconnect(poller_fd, ip, port);
+					continue;
+				}
+				close_connection(poller_fd, fd);
+				reconnect(poller_fd, ip, port);
+				continue;
 			} else if (events[i].events & EPOLLIN) {   
 				int	ret = recieve_response(poller_fd, fd);
 				if (ret <= 0) {
@@ -102,11 +124,7 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 					continue;
 				}
 				ev_modify_event(poller_fd, fd, EVENT_READ); 
-			} else if (events[i].events & EPOLLERR) {
-				close_connection(poller_fd, fd);
-				reconnect(poller_fd, ip, port);
-				continue;
-			}
+			} 		
 		}
 	}
 	return;

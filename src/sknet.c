@@ -266,7 +266,7 @@ int sk_check_so_error(int fd)
 	}
 
 	if (error != 0) {
-		return -1;
+		return error;
 	}
 	return 0;
 }
