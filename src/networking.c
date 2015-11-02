@@ -62,6 +62,13 @@ int recieve_response(int poller_fd, int fd)
 				/* Interupted by a signal */
 				continue;
 			} else { 	
+				char src_ip[128] = {0};	
+				char dst_ip[128] = {0};	
+				int src_port = 0;	
+				int dst_port = 0;	
+				sk_getsockname(fd, src_ip, 128, &src_port);
+				sk_getpeername(fd, dst_ip, 128, &dst_port);
+				SCREEN(SCREEN_RED, stderr, "Recieve message error(from %s:%d to %s:%d): %s\n", src_ip, src_port, dst_ip, dst_port, strerror(errno));
 				return -1;
 			}
 		} else if (ret == 0) {

@@ -4,11 +4,11 @@
 #include <sys/time.h>
 #include <errno.h>
 
+#include "sknet.h"
 #include "ev.h"
 #include "screen.h"
 #include "timer.h"
 #include "networking.h"
-#include "sknet.h"
 
 /* Only support advanced I/O multiplex(i.e. epoll, kevent) now, select(2) and poll(2) are not available for the moment */
 #ifdef __linux__
@@ -64,6 +64,21 @@ int ev_del_timer(int poller_fd, int timerfd) {
 	return epoll_ctl(poller_fd, EPOLL_CTL_DEL, timerfd, NULL);
 }
 
+int ev_check_so_error(int fd) 
+{
+	int error = sk_check_so_error(fd);
+	if (error != 0) {
+		char src_ip[128] = {0};	
+		int src_port = 0;	
+		sk_getsockname(fd, src_ip, 128, &src_port);
+		SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d): %s\n", src_ip, src_port, strerror(error));
+		if (error == ECONNREFUSED) {
+			exit(EXIT_FAILURE);
+		}
+	}
+	return 0;
+}
+
 /* Start a event loop */
 void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 	struct epoll_event events[MAX_EVENT_NO];
@@ -80,10 +95,25 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 			/* event_fd may  be a socket or a timerfd */
 			int fd = events[i].data.fd;
 			if (events[i].events & EPOLLRDHUP) {   
+				ev_check_so_error(fd);
 				close_connection(poller_fd, fd);
 				reconnect(poller_fd, ip, port);
 				continue;
 			} else if (events[i].events & EPOLLERR) {
+				ev_check_so_error(fd);
+				close_connection(poller_fd, fd);
+				reconnect(poller_fd, ip, port);
+				continue;
+			} else if (events[i].events & EPOLLIN) {   
+				int	ret = recieve_response(poller_fd, fd);
+				if (ret <= 0) {
+					close_connection(poller_fd, fd);
+					reconnect(poller_fd, ip, port);
+					continue;
+				} 
+				
+				ev_modify_event(poller_fd, fd, EVENT_WRITE); 
+			} else if (events[i].events & EPOLLOUT) {
 				int error = sk_check_so_error(fd);
 				if (error != 0) {
 					char src_ip[128] = {0};	
@@ -99,24 +129,7 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 					reconnect(poller_fd, ip, port);
 					continue;
 				}
-				close_connection(poller_fd, fd);
-				reconnect(poller_fd, ip, port);
-				continue;
-			} else if (events[i].events & EPOLLIN) {   
-				int	ret = recieve_response(poller_fd, fd);
-				if (ret <= 0) {
-					close_connection(poller_fd, fd);
-					reconnect(poller_fd, ip, port);
-					continue;
-				} 
-				
-				ev_modify_event(poller_fd, fd, EVENT_WRITE); 
-			} else if (events[i].events & EPOLLOUT) {
-				if (sk_check_so_error(fd) != 0) {
-					close_connection(poller_fd, fd);
-					reconnect(poller_fd, ip, port);
-					continue;
-				}
+
 				int ret = send_request(poller_fd, fd);
 				if (ret <= 0) {
 					close_connection(poller_fd, fd);

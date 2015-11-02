@@ -25,6 +25,9 @@ int ev_add_timer(int poller_fd, int timerfd, int sec, int msec, bool once_only,
 	int (*callback) (void *), void *args);
 /* Delete a timer event from poller */
 int ev_del_timer(int poller_fd, int timerfd);
+
+int ev_check_so_error(int fd); 
+
 /* Start event loop */
 void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port);
 int ev_close(int poller_fd);
