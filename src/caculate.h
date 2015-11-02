@@ -6,7 +6,6 @@
 #include <stdint.h>
 
 #include "request.h"
-#include "response.h"
 
 #define STATS_INIT_SIZE 10
 

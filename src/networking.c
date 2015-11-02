@@ -7,13 +7,18 @@
 #include "ev.h"
 #include "networking.h"
 #include "hash_conn.h"
-#include "response.h"
 #include "caculate.h"
 
 /* Globals */
 extern http_request myreq;
 hash_conn_t ghash_conn;
 stats_t net_record;
+
+uint32_t g_status_code_map[1024] = {0};
+
+static struct http_parser_settings parser_settings = {
+	.on_message_complete = response_complete
+};
 
 int start_connection(int poller_fd, const http_request *request)
 {
@@ -66,26 +71,26 @@ int recieve_response(int poller_fd, int fd)
 		}
 	}
 
-	/* On errno = EAGAIN */
-	/*If recieved a complete message, reset offset */
+	http_parser parser;
+	http_parser_init(&parser, HTTP_RESPONSE);
+	parser.data = pconn;
 	int total_bytes = bytes + pconn->offset;
-	int handled_bytes = 0;
-	int handled_sum = 0;
+	int nparsed = http_parser_execute(&parser, &parser_settings, pconn->recv_buffer, total_bytes);
+	printf("total_bytes, %d, nparsed %d\n", total_bytes, nparsed);
 
-	while (true) {
-		handled_bytes = is_response_complete(pconn, total_bytes - handled_sum);
-		if (handled_bytes <= 0) {
-			break;
-		}
-		net_record.total_responses++;
-		struct timeval now;
-		gettimeofday(&now, NULL);
-		uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
-		stats_add(&net_record, cost);
-	
-		handled_sum += handled_bytes;
-	}
-	
+	if (parser.upgrade) {
+		/* Handle new protocol */
+	} 
+
+	/* start -------|------------------|----------------  */ 
+	/*					recv-valid_len					  */
+	/* start -----------------|-------------------------- */ 
+	int valid_length = nparsed;
+	memset(pconn->recv_buffer, 0, valid_length);	
+	memcpy(pconn->recv_buffer, pconn->recv_buffer + valid_length, total_bytes - valid_length);	
+	memset(pconn->recv_buffer + total_bytes - valid_length, 0, RECV_BUFFER_SIZE - total_bytes + valid_length);	
+	pconn->offset = total_bytes - valid_length;
+
 	return bytes;
 }
 
@@ -151,6 +156,26 @@ int reconnect(int poller_fd, uint32_t ip, int port)
 	return sk_async_ipv4_connect(poller_fd, fd, ip, port);
 }
 
-void free_conn_rcv_buffer(conn_t *pconn) {
+void free_conn_rcv_buffer(conn_t *pconn)
+{
 	free(pconn->recv_buffer);
+}
+
+int response_complete(http_parser *parser) 
+{
+	conn_t *pconn = parser->data;
+	/* Record the lastest parsed bytes of a complete http response message */
+	pconn->parsed_bytes = parser->nread; 
+
+	uint32_t status_code = parser->status_code;
+	g_status_code_map[status_code]++;
+	net_record.total_responses++;
+	struct timeval now;
+	gettimeofday(&now, NULL);
+	uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
+	stats_add(&net_record, cost);
+
+	http_parser_init(parser, HTTP_RESPONSE);
+
+	return 0;
 }
