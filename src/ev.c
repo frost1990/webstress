@@ -205,12 +205,14 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 			int fd = events[i].ident;
 			/* If detect an EOF */
 			if (events[i].flags & EV_EOF) {   
+				ev_check_so_error(fd);
 				close_connection(poller_fd, fd);
 				reconnect(poller_fd, ip, port);
 				continue;
 			}
 			/* Report any error */
 			if (events[i].flags & EV_ERROR) {   
+				ev_check_so_error(fd);
 				close_connection(poller_fd, fd);
 				reconnect(poller_fd, ip, port);
 				continue;
@@ -227,7 +229,7 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 			}
 
 			if (events[i].filter == EVFILT_WRITE) {
-				if (sk_check_so_error(fd) != 0) {
+				if (ev_check_so_error(fd) != 0) {
 					close_connection(poller_fd, fd);
 					reconnect(poller_fd, ip, port);
 					continue;
