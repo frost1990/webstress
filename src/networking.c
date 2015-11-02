@@ -82,14 +82,10 @@ int recieve_response(int poller_fd, int fd)
 	http_parser parser = pconn->parser;
 	int total_bytes = bytes + pconn->offset;
 	int nparsed = http_parser_execute(&parser, &parser_settings, pconn->recv_buffer + pconn->offset, total_bytes);
-	SCREEN(SCREEN_YELLOW, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s\n", bytes, pconn->offset, total_bytes, nparsed, http_errno_name(parser.http_errno));
+	SCREEN(SCREEN_YELLOW, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p, offset %d\n", bytes, pconn->offset, total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer, pconn->offset);
 	if (nparsed != 0) {
-		/* start -------|------------------|----------------  */ 
-		/*					recv-valid_len					  */
-		/* start -----------------|-------------------------- */ 
-		memcpy(pconn->recv_buffer, pconn->recv_buffer + nparsed, total_bytes - nparsed);	
-		memset(pconn->recv_buffer + total_bytes - nparsed, 0, RECV_BUFFER_SIZE - total_bytes + nparsed);	
-		pconn->offset = total_bytes - nparsed;	
+		memset(pconn->recv_buffer, 0, total_bytes);
+	
 	}
 	return bytes;
 }
