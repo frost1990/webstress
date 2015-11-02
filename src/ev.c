@@ -184,6 +184,21 @@ int ev_del_timer(int poller_fd, int timerfd) {
 	return 0;	
 }
 
+int ev_check_so_error(int fd) 
+{
+	int error = sk_check_so_error(fd);
+	if (error != 0) {
+		char src_ip[128] = {0};	
+		int src_port = 0;	
+		sk_getsockname(fd, src_ip, 128, &src_port);
+		SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d): %s\n", src_ip, src_port, strerror(error));
+		if (error == ECONNREFUSED) {
+			exit(EXIT_FAILURE);
+		}
+	}
+	return error;
+}
+
 /* Start a event loop */
 void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 	struct kevent events[MAX_EVENT_NO];
