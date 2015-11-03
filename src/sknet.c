@@ -274,7 +274,6 @@ int sk_check_so_error(int fd)
 
 int sk_close(int fd) 
 {
-	SCREEN(SCREEN_WHITE, stdout,"socket close %d\n", fd);
 	return close(fd);
 }
 
