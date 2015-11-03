@@ -113,7 +113,9 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 					continue;
 				} 
 				
-				ev_modify_event(poller_fd, fd, EVENT_WRITE); 
+				if (ret == RECV_NEXT) {
+					ev_modify_event(poller_fd, fd, EVENT_WRITE); 
+				}
 			} else if (events[i].events & EPOLLOUT) {
 				if (ev_check_so_error(fd) != 0) {
 					close_connection(poller_fd, fd);
@@ -242,7 +244,10 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 					reconnect(poller_fd, ip, port);
 					continue;
 				}
-				ev_modify_event(poller_fd, fd, EVENT_WRITE); 
+
+				if (ret == RECV_NEXT) {
+					ev_modify_event(poller_fd, fd, EVENT_WRITE); 
+				}
 			}
 
 			if (events[i].filter == EVFILT_WRITE) {

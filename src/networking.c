@@ -62,8 +62,8 @@ int recieve_response(int poller_fd, int fd)
 				/* Interupted by a signal */
 				continue;
 			} else { 	
-				SCREEN(SCREEN_RED, stderr, "recv(2) %s\n", strerror(errno));
-				return -1;
+				SCREEN(SCREEN_RED, stderr, "recv(2): %s\n", strerror(errno));
+				return RECV_ERROR;
 			}
 		} else if (ret == 0) {
 			return 0;
@@ -76,25 +76,26 @@ int recieve_response(int poller_fd, int fd)
 	int nparsed = http_parser_execute(&parser, &parser_settings, pconn->recv_buffer, total_bytes);
 
 	if (parser.upgrade) {
-		return -1;
+		return RECV_ERROR;
 	} 
 
-	if (nparsed > 0) {
-		SCREEN(SCREEN_BLUE, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p, offset %d\n", bytes, pconn->offset, total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer, pconn->offset);
-	//	if (parser.http_errno == HPE_CB_message_complete) {
-			/* start--------nparsed---total */
-			/* start---nparsed---total--- */
-			//memcpy(pconn->recv_buffer, pconn->recv_buffer + nparsed, total_bytes - nparsed);
-			//memset(pconn->recv_buffer + total_bytes - nparsed, 0, nparsed);
-			//pconn->offset = total_bytes - nparsed;
-	//	} else {
-	//	}
-	pconn->offset += nparsed;
-	} else {
-		SCREEN(SCREEN_YELLOW, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p, offset %d\n", bytes, pconn->offset, total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer, pconn->offset);
-		return -1;
+	if (nparsed >= 0) {
+		//SCREEN(SCREEN_BLUE, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, pconn->offset, 
+					//total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
+		if (parser.http_errno == HPE_CB_message_complete) {
+			memset(pconn->recv_buffer, 0, RECV_BUFFER_SIZE);
+			pconn->offset = 0;
+			/* Tell the ev_loop_poller to notify writable events and send next request */
+			return RECV_NEXT;
+		}
+
+		pconn->offset += bytes;
+		return bytes;
+	} else {	
+		//SCREEN(SCREEN_YELLOW, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, 
+			//pconn->offset, total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
+		return RECV_ERROR;
 	}
-	return bytes;
 }
 
 int send_request(int poller_fd, int fd) 
@@ -117,7 +118,8 @@ int send_request(int poller_fd, int fd)
 				/* Interupted by a signal */
 				continue;
 			} else {
-				return -1;
+				SCREEN(SCREEN_RED, stderr, "send(2): %s\n", strerror(errno));
+				return SEND_ERROR;
 			}
 		}  
 		len -= ret;
@@ -153,7 +155,7 @@ int reconnect(int poller_fd, uint32_t ip, int port)
 	sk_set_nonblock(fd);
 	sk_tcp_no_delay(fd);
 	sk_resue_addr(fd);
-	/* Register this connection to the global hash table, allocate space for recieve message */
+	/* Register this connection to the global hash table, allocate space for recieving message */
 	hash_conn_add(&ghash_conn, fd);
 
 	return sk_async_ipv4_connect(poller_fd, fd, ip, port);
@@ -166,7 +168,7 @@ void free_conn_rcv_buffer(conn_t *pconn)
 
 int response_complete(http_parser *parser) 
 {
-	SCREEN(SCREEN_GREEN, stdout, "on_message_complete\n");
+//	SCREEN(SCREEN_GREEN, stdout, "on_message_complete, nread=%d\n", parser->nread);
 	conn_t *pconn = parser->data;
 
 	uint32_t status_code = parser->status_code;
@@ -177,8 +179,8 @@ int response_complete(http_parser *parser)
 	uint32_t cost = stats_get_interval(&(pconn->latest_snd_time), &now);
 	stats_add(&net_record, cost);
 
+	http_parser_init(parser, HTTP_RESPONSE);
 	/* Tell parser to stop parsing and reset */
-	//http_parser_init(parser, HTTP_RESPONSE);
-	return 0;
+	return RECV_NEXT;
 }
 

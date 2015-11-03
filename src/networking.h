@@ -9,6 +9,11 @@
 
 #define RECV_BUFFER_SIZE (128 * 1024)
 
+#define RECV_ERROR -1
+/* When RECV_NEXT is returned, flush the buffer and notify the writable event to send next http request */
+#define RECV_NEXT -2
+#define SEND_ERROR -1
+
 typedef struct conn_t {
 	struct timeval latest_snd_time; 
 	int fd;
@@ -33,6 +38,5 @@ void free_conn_rcv_buffer(conn_t *pconn);
 int parse_response(conn_t *pconn, http_parser *parser);
 
 int response_complete(http_parser *parser); 
-
 
 #endif
