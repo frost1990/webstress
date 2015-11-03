@@ -133,6 +133,7 @@ int send_request(int poller_fd, int fd)
 	net_record.total_requests++;
 	/* Record send time */
 	gettimeofday(&(pconn->latest_snd_time), NULL);
+	SCREEN(SCREEN_YELLOW, stdout, "Send %d bytes\n", offset);
 	return offset;
 }
 

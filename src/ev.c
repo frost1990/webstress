@@ -158,6 +158,8 @@ int ev_modify_event(int poller_fd, int fd, int active_type)
 	struct kevent ke[1];
 	int ret = 0;
 	if (active_type == EVENT_READ) {
+		EV_SET(&ke[0], fd, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+		ret = kevent(poller_fd, &ke[0], 1, NULL, 0, NULL);
 		EV_SET(&ke[0], fd, EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, NULL);
 		ret = kevent(poller_fd, &ke[0], 1, NULL, 0, NULL);
 	} else if (active_type == EVENT_WRITE) {
