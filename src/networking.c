@@ -83,7 +83,7 @@ int recieve_response(int poller_fd, int fd)
 		//SCREEN(SCREEN_BLUE, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, pconn->offset, 
 					//total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
 		if (parser.http_errno == HPE_CB_message_complete) {
-			memset(pconn->recv_buffer, 0, RECV_BUFFER_SIZE);
+			memset(pconn->recv_buffer, 0, total_bytes);
 			pconn->offset = 0;
 			/* Tell the ev_loop_poller to notify writable events and send next request */
 			return RECV_NEXT;
