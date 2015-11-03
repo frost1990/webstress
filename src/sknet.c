@@ -9,6 +9,7 @@
 #include <stdbool.h>
 
 #include "sknet.h"
+#include "screen.h"
 
 /* Only works in block mode */
 int sk_set_rcv_timeout(int fd, int tv_sec, int tv_usec)
@@ -218,7 +219,7 @@ int sk_async_ipv4_connect(int poller_fd, int fd, uint32_t ip, int port)
 #else
 	#if (defined(__APPLE__)) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined (__NetBSD__)
 		struct kevent ke;
-		EV_SET(&ke, fd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+		EV_SET(&ke, fd,  EVFILT_WRITE, EV_ADD, 0, 0, NULL);
 		return kevent(poller_fd, &ke, 1, NULL, 0, NULL);
 	#endif
 #endif
@@ -273,6 +274,7 @@ int sk_check_so_error(int fd)
 
 int sk_close(int fd) 
 {
+	SCREEN(SCREEN_WHITE, stdout,"socket close %d\n", fd);
 	return close(fd);
 }
 

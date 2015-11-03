@@ -10,8 +10,6 @@
 #include "hash_conn.h"
 #include "ev.h"
 
-long long request_seq = 0;
-long long response_seq = 0;
 struct timeval start;
 
 struct http_request myreq;
