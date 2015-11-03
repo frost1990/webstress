@@ -71,9 +71,8 @@ int ev_check_so_error(int fd)
 		char src_ip[128] = {0};	
 		int src_port = 0;	
 		sk_getsockname(fd, src_ip, 128, &src_port);
-		//SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d): %s\n", src_ip, src_port, strerror(error));
+		SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d): %s\n", src_ip, src_port, strerror(error));
 		if (error == ECONNREFUSED) {
-			SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d): %s\n", src_ip, src_port, strerror(error));
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -96,7 +95,6 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 			/* event_fd may  be a socket or a timerfd */
 			int fd = events[i].data.fd;
 			if (events[i].events & EPOLLRDHUP) {   
-				ev_check_so_error(fd);
 				close_connection(poller_fd, fd);
 				reconnect(poller_fd, ip, port);
 				continue;
@@ -194,9 +192,8 @@ int ev_check_so_error(int fd)
 		char src_ip[128] = {0};	
 		int src_port = 0;	
 		sk_getsockname(fd, src_ip, 128, &src_port);
-		//SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d): %s\n", src_ip, src_port, strerror(error));
+		SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d): %s\n", src_ip, src_port, strerror(error));
 		if (error == ECONNREFUSED) {
-			SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d): %s\n", src_ip, src_port, strerror(error));
 			exit(EXIT_FAILURE);
 		}
 	}

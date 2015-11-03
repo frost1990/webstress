@@ -7,7 +7,7 @@
 #include "request.h"
 #include "http_parser.h"
 
-#define RECV_BUFFER_SIZE (128 * 1024)
+#define RECV_BUFFER_SIZE (64 * 1024)
 
 #define RECV_ERROR -1
 /* When RECV_NEXT is returned, flush the buffer and notify the writable event to send next http request */
