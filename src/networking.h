@@ -23,6 +23,13 @@ typedef struct conn_t {
 	http_parser parser;
 } conn_t;
 
+/* Record all the abnormal events, such as recieved an RST segment from peer */
+typedef struct net_event_record_t {
+	int fin_times;
+	int rst_times;
+	int timeout_times;
+} net_event_record_t;
+
 int start_connection(int poller_fd, const http_request *request);
 
 int recieve_response(int poller_fd, int fd);
