@@ -52,9 +52,9 @@ int recieve_response(int poller_fd, int fd)
 		exit(EXIT_FAILURE);
 	}
 
-	char *recv_buffer = pconn->recv_buffer + pconn->offset;
 	while (true) {
-		int ret = recv(fd, recv_buffer + bytes, RECV_BUFFER_SIZE * sizeof(char) - pconn->offset - bytes, 0);
+		char *recv_buffer = pconn->recv_buffer + pconn->offset;
+		int ret = recv(fd, recv_buffer + bytes, pconn->capacity * sizeof(char) - pconn->offset - bytes, 0);
 		if (ret < 0) {
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
 				break;
@@ -69,6 +69,17 @@ int recieve_response(int poller_fd, int fd)
 			return 0;
 		} else {
 			bytes += ret;
+			int space_left = pconn->capacity * sizeof(char) - pconn->offset - bytes;
+			/* We need to resize our recieve buffer if we encounted a large http response */
+			if (space_left == 0) {
+				pconn->capacity *= 2;
+				char *previous_buffer = pconn->recv_buffer;
+				pconn->recv_buffer = (char *) realloc(previous_buffer, (pconn->capacity) * sizeof(char));
+				if (pconn->recv_buffer == NULL) {
+					SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
+					exit(EXIT_FAILURE);
+				}
+			}
 		}
 	}
 	http_parser parser = pconn->parser;
@@ -80,8 +91,8 @@ int recieve_response(int poller_fd, int fd)
 	} 
 
 	if (nparsed > 0) {
-		//SCREEN(SCREEN_BLUE, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, pconn->offset, 
-			//	total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
+		//SCREEN(SCREEN_YELLOW, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, pconn->offset, 
+				//total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
 		if (parser.http_errno == HPE_CB_message_complete) {
 			memset(pconn->recv_buffer, 0, total_bytes);
 			pconn->offset = 0;

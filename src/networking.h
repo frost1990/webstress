@@ -7,7 +7,7 @@
 #include "request.h"
 #include "http_parser.h"
 
-#define RECV_BUFFER_SIZE (256 * 1024)
+#define RECV_BUFFER_SIZE (64 * 1024)
 
 #define RECV_ERROR -1
 /* When RECV_NEXT is returned, flush the buffer and notify the writable event to send next http request */
@@ -19,7 +19,7 @@ typedef struct conn_t {
 	int fd;
 	char *recv_buffer;
 	int offset;
-	int parsed_bytes;
+	int capacity;
 	http_parser parser;
 } conn_t;
 

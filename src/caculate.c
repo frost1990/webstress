@@ -160,7 +160,7 @@ void stats_resize(stats_t* record)
 {
 	record->capacity *= 2;
 	uint32_t *previous_buffer = record->data;
-	record->data = (uint32_t *)realloc(previous_buffer, (record->capacity) * sizeof(uint32_t));
+	record->data = (uint32_t *) realloc(previous_buffer, (record->capacity) * sizeof(uint32_t));
 	if (record->data == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
 		exit(EXIT_FAILURE);

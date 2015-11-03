@@ -77,7 +77,7 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 		exit(EXIT_FAILURE);
 	}
 	pconn->offset = 0; 
-	pconn->parsed_bytes = 0; 
+	pconn->capacity = RECV_BUFFER_SIZE; 
 	pconn->latest_snd_time.tv_sec = 0;
 	pconn->latest_snd_time.tv_usec = 0;
 	http_parser_init(&(pconn->parser), HTTP_RESPONSE);
