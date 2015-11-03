@@ -54,7 +54,7 @@ int recieve_response(int poller_fd, int fd)
 
 	char *recv_buffer = pconn->recv_buffer + pconn->offset;
 	while (true) {
-		int ret = recv(fd, recv_buffer + bytes, RECV_BUFFER_SIZE * sizeof(char), 0);
+		int ret = recv(fd, recv_buffer + bytes, RECV_BUFFER_SIZE * sizeof(char) - pconn->offset - bytes, 0);
 		if (ret < 0) {
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
 				break;
