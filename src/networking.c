@@ -80,8 +80,8 @@ int recieve_response(int poller_fd, int fd)
 	} 
 
 	if (nparsed >= 0) {
-		//SCREEN(SCREEN_BLUE, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, pconn->offset, 
-					//total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
+		SCREEN(SCREEN_BLUE, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, pconn->offset, 
+					total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
 		if (parser.http_errno == HPE_CB_message_complete) {
 			memset(pconn->recv_buffer, 0, total_bytes);
 			pconn->offset = 0;
@@ -92,8 +92,8 @@ int recieve_response(int poller_fd, int fd)
 		pconn->offset += bytes;
 		return bytes;
 	} else {	
-		//SCREEN(SCREEN_YELLOW, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, 
-			//pconn->offset, total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
+		SCREEN(SCREEN_YELLOW, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, 
+			pconn->offset, total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
 		return RECV_ERROR;
 	}
 }
@@ -168,7 +168,7 @@ void free_conn_rcv_buffer(conn_t *pconn)
 
 int response_complete(http_parser *parser) 
 {
-//	SCREEN(SCREEN_GREEN, stdout, "on_message_complete, nread=%d\n", parser->nread);
+	SCREEN(SCREEN_GREEN, stdout, "on_message_complete, nread=%d\n", parser->nread);
 	conn_t *pconn = parser->data;
 
 	uint32_t status_code = parser->status_code;
