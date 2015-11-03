@@ -3,7 +3,7 @@
 #include "version.h"
 
 const char *help_message = 
-"\nUSAGE: webpress [options] <url>\n"
+"\nUSAGE: webstress [options] <url>\n"
 "\nOPTIONS:\n"
 "	-c			Concurrent tcp connections\n"
 "	-d			Add post form data\n"
