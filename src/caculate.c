@@ -333,7 +333,7 @@ void stats_show_percentage(stats_t *record)
 
 void stats_traffic(stats_t *record, double seconds)
 {
-	SCREEN(SCREEN_YELLOW, stdout, "Http Traffic stats:\n");
+	SCREEN(SCREEN_YELLOW, stdout, "Http traffic stats:\n");
 	uint64_t rx = record->rcv_bytes;
 	uint64_t tx = record->snd_bytes;
 
