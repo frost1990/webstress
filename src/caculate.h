@@ -21,6 +21,7 @@ typedef struct http_status_code_t {
 typedef struct stats_t {
 	size_t capacity;
 	size_t size;
+	double avg;
 	uint64_t total_requests;
 	uint64_t total_responses;
 	uint64_t snd_bytes;
@@ -28,12 +29,17 @@ typedef struct stats_t {
 	uint32_t *data;
 	uint32_t fin_times;
 	uint32_t rst_times;
+	uint32_t max;
+	uint32_t min;
+	uint32_t dev;
 	uint32_t timeout_times;
 } stats_t;
 
 void stats_init(stats_t* record);
 
 void stats_add(stats_t* record, uint32_t element);
+
+void stats_update(stats_t* record, uint32_t element);
 
 void stats_resize(stats_t* record);
 

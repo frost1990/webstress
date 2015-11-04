@@ -139,6 +139,8 @@ void stats_init(stats_t* record)
 	record->total_responses = 0; 
 	record->snd_bytes = 0; 
 	record->rcv_bytes = 0; 
+	record->max = 0; 
+	record->min = INT_MAX - 1; 
 	if (record->data == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
 		exit(EXIT_FAILURE);
@@ -156,6 +158,20 @@ void stats_add(stats_t* record, uint32_t element)
 
 	record->data[record->size] = element;
 	record->size++;
+	stats_update(record, element);
+}
+
+void stats_update(stats_t* record, uint32_t element)
+{
+	if (record->max < element) {
+		record->max = element;
+	}
+
+	if (record->min > element) {
+		record->min = element;
+	}
+
+	record->avg = (record->avg + (double)element) / 2;
 }
 
 void stats_resize(stats_t* record) 
@@ -206,18 +222,18 @@ double stats_navg2(stats_t *record, int m, int n)
 	}
 
 	if (m == n) {
-		return (record->data)[m];
+		return (double)(record->data)[m];
 	}
 
-	int max = (m > n) ? m: n;
-	int min = (m < n) ? m: n;
+	int max = (m > n) ? m : n;
+	int min = (m < n) ? m : n;
 
 	uint32_t sum = 0;
-	for (int i = min + 1; i < max; i++) {
+	for (int i = min; i < max; i++) {
 		sum += (record->data)[i];
 	}
 
-	return (sum / (double) (max - min));
+	return ((double) sum / (double)(max - min));
 }
 
 uint32_t stats_max(stats_t *record) 
@@ -368,9 +384,9 @@ void stats_summary(http_request *request, stats_t *record)
 		SCREEN(SCREEN_YELLOW, stdout, "Http status code brief:\n");
 		summary_status_code(g_status_code_map, 1024);
 
-		double avg = stats_avg(record);
-		uint32_t max = stats_max(record);
-		uint32_t min = stats_min(record);
+		double avg = record->avg;
+		uint32_t max = record->max;
+		uint32_t min = record->min; 
 		double stddev = stats_stddev(record);
 		stats_sort(record);	
 		uint32_t median = (record->data)[record->size / 2];
