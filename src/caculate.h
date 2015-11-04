@@ -7,7 +7,7 @@
 
 #include "request.h"
 
-#define STATS_INIT_SIZE 10
+#define STATS_INIT_SIZE (1024)
 #define GB (1024.00 * 1024.00 * 1024.00)
 #define MB (1024.00 * 1024.00)
 #define KB (1024.00)
@@ -61,6 +61,8 @@ void stats_show_percentage(stats_t *record);
 void stats_vector_debug_show(stats_t *record);
 
 void stats_summary(http_request *request, stats_t *record);
+
+void stats_traffic(stats_t *record, double seconds);
 
 void interupt_summary(int signal);
 

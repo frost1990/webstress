@@ -137,6 +137,8 @@ void stats_init(stats_t* record)
 	record->data = (uint32_t *) malloc(record->capacity * sizeof(uint32_t));
 	record->total_requests = 0;
 	record->total_responses = 0; 
+	record->snd_bytes = 0; 
+	record->rcv_bytes = 0; 
 	if (record->data == NULL) {
 		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
 		exit(EXIT_FAILURE);
@@ -310,11 +312,40 @@ void stats_show_percentage(stats_t *record)
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n", 9.00 * 100 / 10, stats_navg2(record, top80, top90) / 1000);
 	int top95 = record->size * 95 / 100;
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n", 9.50 * 100 / 10, stats_navg2(record, top90, top95) / 1000);
-	int top999 = record->size * 9999 / 10000;
-	SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n", 9.999 * 100 / 10, stats_navg2(record, top95, top999) / 1000);
-	int topall = record->size * 100 / 100;
+	int top999 = record->size * 999 / 1000;
+	SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n", 9.99 * 100 / 10, stats_navg2(record, top95, top999) / 1000);
+	int topall = record->size;
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n\n", 10.00 * 100 / 10, stats_navg2(record, top999, topall) / 1000);
 }	
+
+void stats_traffic(stats_t *record, double seconds)
+{
+	SCREEN(SCREEN_YELLOW, stdout, "Http Traffic stats:\n");
+	uint64_t rx = record->rcv_bytes;
+	uint64_t tx = record->snd_bytes;
+
+	double tgb = rx / GB;
+	double tmb = rx / MB;
+	double tkb = rx / KB;
+	if (tgb > 1.0) {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved:\t%4.3fGB, %4.3fGB/sec\n", tgb, tgb / seconds);
+	} else if (tmb > 1.0) {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved:\t%4.3fMB, %4.3fMB/sec\n", tmb, tmb / seconds);
+	} else {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved:\t%4.3fKB, %4.3fKB/sec\n", tkb, tkb / seconds);
+	}
+
+	double rgb = tx / GB;
+	double rmb = tx / MB;
+	double rkb = tx / KB;
+	if (rgb > 1.0) {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent:\t\t%4.3fGB, %4.3fGB/sec\n\n", rgb, rgb / seconds);
+	} else if (rmb > 1.0) {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent:\t\t%4.3fMB, %4.3fMB/sec\n\n", rmb, rmb / seconds);
+	} else {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent:\t\t%4.3fKB, %4.3fKB/sec\n\n", rkb, rkb / seconds);
+	}
+}
 
 void stats_summary(http_request *request, stats_t *record)
 {
@@ -331,31 +362,7 @@ void stats_summary(http_request *request, stats_t *record)
 	double finished = (record->total_responses) ? ((double) record->total_responses/ (double) record->total_requests) : 0;
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percent: %4.2f\%%\n\n", 100 * finished);
 
-	SCREEN(SCREEN_YELLOW, stdout, "Traffic stats:\n");
-	uint64_t rx = record->rcv_bytes;
-	uint64_t tx = record->snd_bytes;
-
-	long double tgb = rx / GB;
-	long double tmb = rx / MB;
-	long double tkb = rx / KB;
-	if (tgb > 1.0) {
-		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent\t%4.3f GB, %4.3f GB/sec\n", tgb, tgb/seconds);
-	} else if (tmb > 1.0) {
-		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent\t%4.3f MB, %4.3f MB/sec\n", tmb, tmb/seconds);
-	} else {
-		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent\t%4.3f KB, %4.3f KB/sec\n", tkb, tkb/seconds);
-	}
-
-	long double rgb = tx / GB;
-	long double rmb = tx / MB;
-	long double rkb = tx / KB;
-	if (rgb > 1.0) {
-		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved\t%4.3f GB, %4.3f GB/sec\n", rgb, rgb/seconds);
-	} else if (rmb > 1.0) {
-		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved\t%4.3f MB, %4.3f MB/sec\n", rmb, rmb/seconds);
-	} else {
-		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved\t%4.3f KB, %4.3f KB/sec\n\n", rkb, rkb/seconds);
-	}
+	stats_traffic(record, seconds);
 
 	if (record->total_responses > 0) {
 		SCREEN(SCREEN_YELLOW, stdout, "Http status code brief:\n");
