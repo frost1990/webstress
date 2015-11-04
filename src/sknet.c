@@ -7,6 +7,7 @@
 #endif
 
 #include <stdbool.h>
+#include <string.h>
 
 #include "sknet.h"
 #include "screen.h"
@@ -267,6 +268,7 @@ int sk_check_so_error(int fd)
 	}
 
 	if (error != 0) {
+		SCREEN(SCREEN_RED, stderr, "getsockopt(2): %s\n", strerror(errno));
 		return error;
 	}
 	return 0;
