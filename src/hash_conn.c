@@ -3,6 +3,7 @@
 
 #include "hash_conn.h"
 #include "list_conn.h"
+#include "exception.h"
 #include "screen.h"
 
 bool is_prime(int num) 
@@ -41,18 +42,11 @@ void hash_conn_init(hash_conn_t *phash_conn, int conns)
 	phash_conn->elenum = 0; 
 
 	phash_conn->idx_ptr = (bucket_t **) malloc(sizeof(bucket_t *) * phash_conn->table_size);
-
-	if (phash_conn->idx_ptr == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
-		exit(EXIT_FAILURE);
-	}
+	ASSERT_ALLOCATE(phash_conn->idx_ptr);
 
 	for (int i = 0; i < phash_conn->table_size; i++) {
 		(phash_conn->idx_ptr)[i] = malloc(sizeof(bucket_t));
-		if ((phash_conn->idx_ptr)[i] == NULL) {
-			SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
-			exit(EXIT_FAILURE);
-		}
+		ASSERT_ALLOCATE((phash_conn->idx_ptr)[i]);
 
 		(phash_conn->idx_ptr)[i]->depth = 0;
 		(phash_conn->idx_ptr)[i]->key = -1;
@@ -66,26 +60,16 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 	int idx = modhash(fd, phash_conn->table_size);
 	bucket_t *location = (phash_conn->idx_ptr)[idx];
 	conn_t *pconn = (conn_t *) malloc(sizeof(conn_t));
-	if (pconn == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
-		exit(EXIT_FAILURE);
-	}
+	ASSERT_ALLOCATE(pconn);
 	pconn->fd = fd;
 	pconn->recv_buffer = (char *) malloc(RECV_BUFFER_SIZE * sizeof(char));
-	if (pconn->recv_buffer == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
-		exit(EXIT_FAILURE);
-	}
+	ASSERT_ALLOCATE(pconn->recv_buffer);
 	pconn->offset = 0; 
 	pconn->capacity = RECV_BUFFER_SIZE; 
 	pconn->latest_snd_time.tv_sec = 0;
 	pconn->latest_snd_time.tv_usec = 0;
 	http_parser_init(&(pconn->parser), HTTP_RESPONSE);
 	(pconn->parser).data = pconn;
-	if (pconn->recv_buffer == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
-		exit(EXIT_FAILURE);
-	}
 
 	if (location->depth != 0) {
 		list_conn_add(location, pconn);

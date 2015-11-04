@@ -1,4 +1,5 @@
 #include "list_conn.h"
+#include "exception.h"
 
 int list_conn_length(bucket_t *list) 
 {
@@ -19,10 +20,7 @@ void list_conn_add(bucket_t *list, conn_t *pconn)
 	}
 
 	list->next = (bucket_t *) malloc(sizeof(bucket_t));
-	if (list->next == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
-		exit(EXIT_FAILURE);
-	}
+	ASSERT_ALLOCATE(list->next);
 
 	list->next->next = NULL;
 	list->next->key = pconn->fd;

@@ -1,5 +1,5 @@
-#ifndef _CAPTURE_
-#define _CAPTURE_
+#ifndef _CAPTURE_H_
+#define _CAPTURE_H_
 
 #include <stdio.h>
 #include <string.h>

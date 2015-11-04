@@ -8,6 +8,7 @@
 #include "networking.h"
 #include "hash_conn.h"
 #include "caculate.h"
+#include "exception.h"
 
 /* Globals */
 extern http_request myreq;
@@ -75,10 +76,7 @@ int recieve_response(int poller_fd, int fd)
 				pconn->capacity *= 2;
 				char *previous_buffer = pconn->recv_buffer;
 				pconn->recv_buffer = (char *) realloc(previous_buffer, (pconn->capacity) * sizeof(char));
-				if (pconn->recv_buffer == NULL) {
-					SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
-					exit(EXIT_FAILURE);
-				}
+				ASSERT_ALLOCATE(pconn->recv_buffer);
 			}
 		}
 	}

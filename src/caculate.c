@@ -4,6 +4,7 @@
 
 #include "caculate.h"
 #include "screen.h"	
+#include "exception.h"	
 
 static struct http_status_code_t status_code_map [] = {
 	{100, "Continue"},
@@ -135,16 +136,14 @@ void stats_init(stats_t* record)
 	record->size = 0;
 	record->capacity = STATS_INIT_SIZE;
 	record->data = (uint32_t *) malloc(record->capacity * sizeof(uint32_t));
+	ASSERT_ALLOCATE(record->data);
 	record->total_requests = 0;
 	record->total_responses = 0; 
 	record->snd_bytes = 0; 
 	record->rcv_bytes = 0; 
 	record->max = 0; 
 	record->min = INT_MAX - 1; 
-	if (record->data == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
-		exit(EXIT_FAILURE);
-	}
+
 
 	memset(record->data, 0, record->capacity);
 }
@@ -179,10 +178,8 @@ void stats_resize(stats_t* record)
 	record->capacity *= 2;
 	uint32_t *previous_buffer = record->data;
 	record->data = (uint32_t *) realloc(previous_buffer, (record->capacity) * sizeof(uint32_t));
-	if (record->data == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Cannot allocate memory, malloc(3) failed.\n");
-		exit(EXIT_FAILURE);
-	}
+	ASSERT_ALLOCATE(record->data);
+
 	memset(record->data + record->size + 1, 0, record->capacity - record->size);
 }
 

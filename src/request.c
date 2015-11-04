@@ -11,6 +11,7 @@
 #include "regex_util.h"
 #include "url.h"
 #include "screen.h"
+#include "exception.h"
 
 /* The array must be correctly ordered */
 static struct method_map method_name_map [] = {
@@ -166,10 +167,7 @@ int parse_opt(int argc, char **argv, http_request *request)
 void compose_request_buffer(http_request* request)
 {
 	char *buffer = malloc(REQUEST_BUFFER_SIZE * sizeof(char));
-	if (buffer == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Cannot allocate dynamic memory , malloc(3) failed.\n");
-		exit(EXIT_FAILURE);
-	}
+	ASSERT_ALLOCATE(buffer);
 
 	memset(buffer, 0, REQUEST_BUFFER_SIZE);
 	size_t offset = 0;
