@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <sys/time.h>
+#include <stdint.h>
 
 #include "request.h"
 #include "http_parser.h"
@@ -25,9 +26,11 @@ typedef struct conn_t {
 
 /* Record all the abnormal events, such as recieved an RST segment from peer */
 typedef struct net_event_record_t {
-	int fin_times;
-	int rst_times;
-	int timeout_times;
+	uint32_t fin_times;
+	uint32_t rst_times;
+	uint32_t timeout_times;
+	uint32_t snd_bytes;
+	uint32_t rcv_bytes;
 } net_event_record_t;
 
 int start_connection(int poller_fd, const http_request *request);

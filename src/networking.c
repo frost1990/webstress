@@ -91,8 +91,6 @@ int recieve_response(int poller_fd, int fd)
 	} 
 
 	if (nparsed > 0) {
-		//SCREEN(SCREEN_YELLOW, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, pconn->offset, 
-				//total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
 		if (parser.http_errno == HPE_CB_message_complete) {
 			memset(pconn->recv_buffer, 0, total_bytes);
 			pconn->offset = 0;
@@ -103,8 +101,6 @@ int recieve_response(int poller_fd, int fd)
 		pconn->offset += bytes;
 		return bytes;
 	} else {	
-		//SCREEN(SCREEN_YELLOW, stdout, "recv bytes %d, offset %d, total_bytes %d, nparsed %d, httperrno %s, buffer %p\n", bytes, 
-			//pconn->offset, total_bytes, nparsed, http_errno_name(parser.http_errno), pconn->recv_buffer);
 		return RECV_ERROR;
 	}
 }

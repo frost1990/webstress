@@ -68,7 +68,6 @@ void list_conn_delete(bucket_t *list, int fd)
 
 void list_conn_debug_show(bucket_t *list)
 {
-
 	for ( ; list != NULL; list = list->next) {
 		SCREEN(SCREEN_DARK_GREEN, stdout,"socket %d-> ", list->key);
 	}
@@ -83,8 +82,6 @@ void list_conn_free(bucket_t *list)
 		bucket_t *store = p;
 		free_conn_rcv_buffer(store->val);
 		p = store->next;
-		/* Note: if p = list, will report "free(): invalid next size (fast)" because list is a continuous buffer in hash table slots 
- 		this is not the situation when you free a two-dimensional dynamic array */
 		if (store != list) {
 			free(store);
 		}

@@ -15,10 +15,6 @@
 #include <string.h>
 #include <stdarg.h>
 
-
-#define SK_OK 0
-#define SK_ERR -1
-
 /* Only works in block mode */
 int sk_set_rcv_timeout(int fd, int tv_sec, int tv_usec);
 /* Only works in block mode */
