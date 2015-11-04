@@ -82,6 +82,8 @@ int recieve_response(int poller_fd, int fd)
 			}
 		}
 	}
+
+	net_record.rcv_bytes += bytes;
 	http_parser parser = pconn->parser;
 	int total_bytes = bytes + pconn->offset;
 	int nparsed = http_parser_execute(&parser, &parser_settings, pconn->recv_buffer, total_bytes);
@@ -138,6 +140,7 @@ int send_request(int poller_fd, int fd)
 	}
 
 	net_record.total_requests++;
+	net_record.snd_bytes += offset;
 	/* Record send time */
 	gettimeofday(&(pconn->latest_snd_time), NULL);
 	return offset;

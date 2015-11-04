@@ -326,10 +326,36 @@ void stats_summary(http_request *request, stats_t *record)
 	SCREEN(SCREEN_WHITE, stdout, "========================================Benchmarking terminates now========================================\n");
 	SCREEN(SCREEN_YELLOW, stdout, "Total summary:\n");
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Duration: %4.2f seconds\n", seconds);
-	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu requests sent, %4.2f requests per second\n", record->total_requests, record->total_requests / seconds);
-	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu responses recieved, %4.2f responses per second\n", record->total_responses, record->total_responses / seconds);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu requests sent, %4.2f requests/sec\n", record->total_requests, record->total_requests / seconds);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu responses recieved, %4.2f responses/sec\n", record->total_responses, record->total_responses / seconds);
 	double finished = (record->total_responses) ? ((double) record->total_responses/ (double) record->total_requests) : 0;
 	SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percent: %4.2f\%%\n\n", 100 * finished);
+
+	SCREEN(SCREEN_YELLOW, stdout, "Traffic stats:\n");
+	uint64_t rx = record->rcv_bytes;
+	uint64_t tx = record->snd_bytes;
+
+	long double tgb = rx / GB;
+	long double tmb = rx / MB;
+	long double tkb = rx / KB;
+	if (tgb > 1.0) {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent\t%4.3f GB, %4.3f GB/sec\n", tgb, tgb/seconds);
+	} else if (tmb > 1.0) {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent\t%4.3f MB, %4.3f MB/sec\n", tmb, tmb/seconds);
+	} else {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent\t%4.3f KB, %4.3f KB/sec\n", tkb, tkb/seconds);
+	}
+
+	long double rgb = tx / GB;
+	long double rmb = tx / MB;
+	long double rkb = tx / KB;
+	if (rgb > 1.0) {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved\t%4.3f GB, %4.3f GB/sec\n", rgb, rgb/seconds);
+	} else if (rmb > 1.0) {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved\t%4.3f MB, %4.3f MB/sec\n", rmb, rmb/seconds);
+	} else {
+		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved\t%4.3f KB, %4.3f KB/sec\n\n", rkb, rkb/seconds);
+	}
 
 	if (record->total_responses > 0) {
 		SCREEN(SCREEN_YELLOW, stdout, "Http status code brief:\n");

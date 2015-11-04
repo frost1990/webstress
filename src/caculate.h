@@ -8,6 +8,9 @@
 #include "request.h"
 
 #define STATS_INIT_SIZE 10
+#define GB (1024.00 * 1024.00 * 1024.00)
+#define MB (1024.00 * 1024.00)
+#define KB (1024.00)
 
 typedef struct http_status_code_t {
 	uint32_t  code;
@@ -20,7 +23,12 @@ typedef struct stats_t {
 	size_t size;
 	uint64_t total_requests;
 	uint64_t total_responses;
+	uint64_t snd_bytes;
+	uint64_t rcv_bytes;
 	uint32_t *data;
+	uint32_t fin_times;
+	uint32_t rst_times;
+	uint32_t timeout_times;
 } stats_t;
 
 void stats_init(stats_t* record);
