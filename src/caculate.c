@@ -175,7 +175,7 @@ void stats_free(stats_t* record)
 
 double stats_avg(stats_t *record) 
 {
-	uint32_t sum = 0;
+	uint64_t sum = 0;
 	for (int i = 0; i < record->size; i++) {
 		sum += (record->data)[i];
 	}
@@ -242,10 +242,10 @@ uint32_t stats_min(stats_t * record)
 
 double stats_stddev(stats_t * record)
 {
-	double sum = 0.0;
-	double avg = stats_avg(record);
+	long double sum = 0.0;
+	long double avg = stats_avg(record);
 	for (int i = 0; i < record->size; i++) {
-		double element = (long double)record->data[i];
+		long double element = (long double)record->data[i];
 		sum = + powl(element - avg, 2);
 	}
 
