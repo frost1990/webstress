@@ -387,7 +387,7 @@ void stats_summary(http_request *request, stats_t *record)
 		double stddev = stats_stddev(record);
 		stats_sort(record);	
 		uint32_t median = (record->data)[record->size / 2];
-		SCREEN(SCREEN_YELLOW, stdout, "Cost time:\n");
+		SCREEN(SCREEN_YELLOW, stdout, "Latency:\n");
 		SCREEN(SCREEN_DARK_GREEN, stdout, "Average:\t\t%4.3f ms\n", avg / 1000);
 		SCREEN(SCREEN_DARK_GREEN, stdout, "Median:\t\t\t%4.3f ms\n", (double) median / 1000);
 		SCREEN(SCREEN_DARK_GREEN, stdout, "Maximum:\t\t%4.3f ms\n", (double) max / 1000.00);
@@ -396,7 +396,7 @@ void stats_summary(http_request *request, stats_t *record)
 	}
 	
 	if (record->size >= 100) {
-		SCREEN(SCREEN_YELLOW, stdout, "Cost time percentage distribution:\n");
+		SCREEN(SCREEN_YELLOW, stdout, "Latency percentage distribution:\n");
 		stats_show_percentage(record);	
 	}
 
