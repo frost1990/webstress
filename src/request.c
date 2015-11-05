@@ -76,7 +76,7 @@ void parse_cli(int argc, char **argv, http_request *request) {
 			case 'd':
 				request->method= POST; 
 				strncpy(request->bodydata, optarg, 1024);
-				strncpy(request->content_type, "Content-Type: application/x-www-form-urlencoded", 1024);
+				strncpy(request->content_type, "application/x-www-form-urlencoded", 1024);
 				break;
 			case 'f':
 				request->pipelining = true;
@@ -206,7 +206,7 @@ void compose_request_buffer(http_request* request)
 	}
 
 	if (strlen(request->content_type) > 0) {
-		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s\r\n", request->bodydata);
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Content-Type: %s\r\n", request->content_type);
 		offset += bytes;
 	}
 
