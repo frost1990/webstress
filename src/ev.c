@@ -71,7 +71,6 @@ int ev_check_so_error(int fd)
 		char src_ip[128] = {0};	
 		int src_port = 0;	
 		sk_getsockname(fd, src_ip, 128, &src_port);
-		SCREEN(SCREEN_RED, stderr, "Connection error(from %s:%d): %s\n", src_ip, src_port, strerror(error));
 		if (error == ECONNREFUSED) {
 			exit(EXIT_FAILURE);
 		}
