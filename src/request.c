@@ -76,6 +76,7 @@ void parse_cli(int argc, char **argv, http_request *request) {
 			case 'd':
 				request->method= POST; 
 				strncpy(request->bodydata, optarg, 1024);
+				strncpy(request->content_type, "Content-Type: application/x-www-form-urlencoded", 1024);
 				break;
 			case 'f':
 				request->pipelining = true;
@@ -201,6 +202,11 @@ void compose_request_buffer(http_request* request)
 	/* Host */
 	if (is_match_pattern(request->host, REGEX_IPV4) != 0) {
 		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s\r\n", request->host);
+		offset += bytes;
+	}
+
+	if (strlen(request->content_type) > 0) {
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s\r\n", request->bodydata);
 		offset += bytes;
 	}
 

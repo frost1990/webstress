@@ -36,6 +36,7 @@ typedef struct http_request {
 	char querystring[1024];
 	char fragment[256];
 	char userinfo[256];
+	char content_type[256];
 	char bodydata[1024];
 
 	http_request_method_t method;
