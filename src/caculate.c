@@ -225,12 +225,12 @@ double stats_navg2(stats_t *record, int m, int n)
 	int max = (m > n) ? m : n;
 	int min = (m < n) ? m : n;
 
-	uint32_t sum = 0;
+	uint64_t sum = 0;
 	for (int i = min; i < max; i++) {
 		sum += (record->data)[i];
 	}
 
-	return ((double) sum / (double)(max - min));
+	return ((double) sum / (max - min + 1));
 }
 
 uint32_t stats_max(stats_t *record) 
