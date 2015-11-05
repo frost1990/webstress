@@ -65,7 +65,6 @@ void tv_show_debug(tv_queue_t *queue)
 	}
 	SCREEN(SCREEN_DARK_GREEN, stdout,"END\n");
 	return;
-
 }
 
 void tv_free_all(tv_queue_t *queue)
