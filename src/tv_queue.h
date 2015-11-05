@@ -23,6 +23,8 @@ void tv_push(tv_queue_t *queue, struct timeval tv);
 
 tv_node_t *tv_front(tv_queue_t *queue);
 
+void tv_show_debug(tv_queue_t *queue);
+
 void tv_free_all(tv_queue_t *queue);
 
 #endif

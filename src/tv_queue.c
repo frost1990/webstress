@@ -4,6 +4,13 @@
 #include "screen.h"
 #include "exception.h"
 
+static void tv_show_time(struct timeval tv) 
+{    
+	struct tm ptv;
+	localtime_r(&tv.tv_sec, &ptv);
+	SCREEN(SCREEN_DARK_GREEN, stderr, "%02d:%02d:%02d %06d", ptv.tm_hour, ptv.tm_min, ptv.tm_sec, tv.tv_usec);
+}	
+
 void tv_init(tv_queue_t *queue)
 {
 	queue->head = NULL;
@@ -48,6 +55,17 @@ tv_node_t *tv_front(tv_queue_t *queue)
 tv_node_t *tv_end(tv_queue_t *queue)
 {
 	return queue->tail;
+}
+
+void tv_show_debug(tv_queue_t *queue)
+{
+	tv_node_t *p = queue->head;
+	for ( ; p != NULL; p = p->next) {
+		tv_show_time(p->val);
+	}
+	SCREEN(SCREEN_DARK_GREEN, stdout,"END\n");
+	return;
+
 }
 
 void tv_free_all(tv_queue_t *queue)
