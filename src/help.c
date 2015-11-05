@@ -6,7 +6,7 @@ const char *help_message =
 "\nUSAGE: webstress [options] <url>\n"
 "\nOPTIONS:\n"
 "	-c			Concurrent tcp connections\n"
-"	-d			Add post form data\n"
+"	-d			Add post application/x-www-form-urlencoded data\n"
 "	-f			Run in pipelining mode, will send as many requests as possible,	some summary information are not available\n"
 "	-H			Add additional http request header\n"
 "	-h			Print help message\n"
