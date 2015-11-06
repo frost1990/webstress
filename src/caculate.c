@@ -325,10 +325,15 @@ void stats_show_percentage(stats_t *record)
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n", 9.00 * 100 / 10, stats_navg2(record, top80, top90) / 1000);
 	int top95 = record->size * 95 / 100;
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n", 9.50 * 100 / 10, stats_navg2(record, top90, top95) / 1000);
-	int top999 = record->size * 999 / 1000;
-	SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n", 9.99 * 100 / 10, stats_navg2(record, top95, top999) / 1000);
-	int topall = record->size;
-	SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n\n", 10.00 * 100 / 10, stats_navg2(record, top999, topall) / 1000);
+	if (record->size >= 1000) {
+		int top999 = record->size * 999 / 1000;
+		SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n", 9.99 * 100 / 10, stats_navg2(record, top95, top999) / 1000);
+		int topall = record->size;
+		SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n\n", 10.00 * 100 / 10, stats_navg2(record, top999, topall) / 1000);
+	} else {
+		int topall = record->size;
+		SCREEN(SCREEN_DARK_GREEN, stdout, "%4.2f\%%\t\t\t%4.3f ms\n\n", 10.00 * 100 / 10, stats_navg2(record, top95, topall) / 1000);
+	}
 }	
 
 void stats_traffic(stats_t *record, double seconds)
