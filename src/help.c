@@ -14,7 +14,6 @@ const char *help_message =
 "	-h			Print help message\n"
 "	-m			Benchmark duration time in minutes\n"
 "	-p			Specify a port\n"
-"	-t			Set request process timeout in milliseconds and calculate time out rate\n" 
 "	-v			Show version information\n";	 
 
 void help(void) 
