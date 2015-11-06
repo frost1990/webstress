@@ -77,5 +77,5 @@ void tv_free_all(tv_queue_t *queue)
 	}
 	queue->head = NULL;
 	queue->tail = NULL;
-	queue->size	= 0;
+	queue->size = 0;
 }

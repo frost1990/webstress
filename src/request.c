@@ -51,6 +51,7 @@ void init_http_request(http_request *request)
 	memset(request->path, 0, 256);
 	memset(request->querystring, 0, 1024);
 	memset(request->fragment, 0, 256);
+	memset(request->content_type, 0, 256);
 	memset(request->bodydata, 0, 1024);
 }
 
