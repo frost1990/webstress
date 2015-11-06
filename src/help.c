@@ -1,6 +1,8 @@
 #include <stdio.h>
+
 #include "help.h"
 #include "version.h"
+#include "screen.h"
 
 const char *help_message = 
 "\nUSAGE: webstress [options] <url>\n"
@@ -17,5 +19,5 @@ const char *help_message =
 
 void help(void) 
 {
-	printf("%s\n", help_message);
+	SCREEN(SCREEN_WHITE, stdout, "%s\n", help_message);
 }
