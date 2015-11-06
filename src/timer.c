@@ -1,13 +1,31 @@
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <time.h>
-#include <sys/time.h>
 
 #include "timer.h"
+#include "exception.h"
 
 #ifdef __linux__
 #include <sys/timerfd.h>
+
+int timer_init(timer_heap_t *timer, int capacity)
+{
+	timer->heap_array = calloc(1, capacity * sizeof(timer_node_t));
+	ASSERT_ALLOCATE(timer->heap_array);
+	timer->size = 0;
+	timer->capacity = capacity;
+
+	return 0;
+}
+
+int timer_free(timer_heap_t *timer)
+{
+	free(timer->heap_array); 
+	timer->size = 0;
+	timer->capacity = 0;
+	return 0;
+}
 
 int timer_create_fd(void) 
 {

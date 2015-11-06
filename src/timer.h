@@ -2,10 +2,28 @@
 #define _TIMER_H_
 
 #include <stdbool.h>
+#include <sys/time.h>
+#include <time.h>
 
 #define THOUSAND (1000lu) 
 #define MILLION (1000000lu) 
 #define BILLION (1000000000lu) 
+
+#define TIMER_SIZE  1024 
+
+typedef struct timer_node_t {
+	struct timeval expire;
+} timer_node_t;
+
+typedef struct timer_heap_t {
+	timer_node_t *heap_array;
+	size_t size;
+	size_t capacity;
+} timer_heap_t;
+
+int timer_init(timer_heap_t *timer, int capacity);
+
+int timer_free(timer_heap_t *timer);
 
 int timer_create_fd(void);
 /* Enable the timer and set interval, timer will first run after it's specified interval */
