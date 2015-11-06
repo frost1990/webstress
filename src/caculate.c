@@ -342,23 +342,23 @@ void stats_traffic(stats_t *record, double seconds)
 	uint64_t rx = record->rcv_bytes;
 	uint64_t tx = record->snd_bytes;
 
-	double tgb = rx / GB;
-	double tmb = rx / MB;
-	double tkb = rx / KB;
-	if (tgb > 1.0) {
+	double rgb = rx / GB;
+	double rmb = rx / MB;
+	double rkb = rx / KB;
+	if (rgb > 1.0) {
 		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved:\t%4.3fGB, %4.3fGB/sec\n", tgb, tgb / seconds);
-	} else if (tmb > 1.0) {
+	} else if (rmb > 1.0) {
 		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved:\t%4.3fMB, %4.3fMB/sec\n", tmb, tmb / seconds);
 	} else {
 		SCREEN(SCREEN_DARK_GREEN, stdout, "Recieved:\t%4.3fKB, %4.3fKB/sec\n", tkb, tkb / seconds);
 	}
 
-	double rgb = tx / GB;
-	double rmb = tx / MB;
-	double rkb = tx / KB;
-	if (rgb > 1.0) {
+	double tgb = tx / GB;
+	double tmb = tx / MB;
+	double tkb = tx / KB;
+	if (tgb > 1.0) {
 		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent:\t\t%4.3fGB, %4.3fGB/sec\n\n", rgb, rgb / seconds);
-	} else if (rmb > 1.0) {
+	} else if (tmb > 1.0) {
 		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent:\t\t%4.3fMB, %4.3fMB/sec\n\n", rmb, rmb / seconds);
 	} else {
 		SCREEN(SCREEN_DARK_GREEN, stdout, "Sent:\t\t%4.3fKB, %4.3fKB/sec\n\n", rkb, rkb / seconds);
