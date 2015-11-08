@@ -71,7 +71,7 @@ int recieve_response(int poller_fd, int fd)
 		} else {
 			bytes += ret;
 			int space_left = pconn->capacity * sizeof(char) - pconn->offset - bytes;
-			/* We need to resize our recieve buffer if we encounted a large http response */
+			/* We need to resize our recieve buffer if we encounter a large http response */
 			if (space_left == 0) {
 				pconn->capacity *= 2;
 				char *previous_buffer = pconn->recv_buffer;
