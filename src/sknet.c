@@ -268,7 +268,7 @@ int sk_check_so_error(int fd)
 	}
 
 	if (error != 0) {
-		SCREEN(SCREEN_RED, stderr, "getsockopt(2): %s\n", strerror(errno));
+		SCREEN(SCREEN_RED, stderr, "getsockopt(2): %s\n", strerror(error));
 		return error;
 	}
 	return 0;
