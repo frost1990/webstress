@@ -355,3 +355,22 @@ uint32_t sk_str_to_ipv4(const char *ipstr)
 {
 	return ntohl(inet_addr(ipstr));
 }
+
+int sk_bind_listen(int listen_fd, int port, int backlog) 
+{
+	int ret = 0;
+	struct sockaddr_in address;	
+	bzero(&address, sizeof(address));
+	address.sin_family = AF_INET;
+	address.sin_addr.s_addr = htonl(INADDR_ANY);
+	address.sin_port = htons(port);
+	
+	ret = bind(listen_fd, (struct sockaddr *) &address, sizeof(address));
+	if (ret < 0) {
+		return ret;
+	}
+	
+	ret = listen(listen_fd, backlog);
+
+	return ret;
+}
