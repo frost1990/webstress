@@ -46,7 +46,7 @@ typedef struct http_request {
 	/* Unit millisecond */
 	int timeout;
 	uint32_t ip;
-	uint32_t port;
+	int port;
 
 	bool pipelining;
 

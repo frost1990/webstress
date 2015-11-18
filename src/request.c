@@ -202,8 +202,16 @@ void compose_request_buffer(http_request* request)
 
 	/* Host */
 	if (is_match_pattern(request->host, REGEX_IPV4) != 0) {
-		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s\r\n", request->host);
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s:\r\n", request->host);
 		offset += bytes;
+	} else {
+		if (request->port == PORT_HTTP){
+			bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s:\r\n", request->host);
+			offset += bytes;
+		} else { 
+			bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s:%d\r\n", request->host, request->port);
+			offset += bytes;
+		}
 	}
 
 	if (strlen(request->content_type) > 0) {
