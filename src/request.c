@@ -27,6 +27,10 @@ static struct method_map method_name_map [] = {
 
 void get_header_value(const char *header, const char *src, char *dst)
 {
+	if (src == NULL) {
+		return;
+	}
+
 	char *p = NULL;
 	if ((p = strstr(src, header)) == NULL) {
 		return;
