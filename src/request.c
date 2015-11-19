@@ -263,7 +263,7 @@ void compose_request_buffer(http_request* request)
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
 	offset += bytes;
 
-	SCREEN(SCREEN_YELLOW, stdout, "Http request header:\n");
+	SCREEN(SCREEN_BLUE, stdout, "Http request header:\n");
 	SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
 
 	/* Body starts */
