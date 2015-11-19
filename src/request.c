@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <ctype.h>
 
 #include "request.h"
 #include "http_parser.h"
@@ -23,6 +24,27 @@ static struct method_map method_name_map [] = {
 	{OPTIONS, "OPTIONS"},
 	{DELETE, "DELETE"},
 };
+
+void get_header_value(const char *header, const char *src, char *dst)
+{
+	char *p = NULL;
+	if ((p = strstr(src, header)) == NULL) {
+		return;
+	}
+
+	char *val = strstr(p + strlen(header), ":") + strlen(":"); 
+	while (isspace(*val)) {
+		val++;
+	}
+	char *start = val;
+	while (!isspace(*val)) {
+		val++;
+	}
+
+	/*Host: 12345\r\n */
+	snprintf(dst, val - start, "%s", start);
+	return;
+}	
 
 const char *get_method_name(http_request_method_t method) 
 {
@@ -205,12 +227,16 @@ void compose_request_buffer(http_request* request)
 		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s:\r\n", request->host);
 		offset += bytes;
 	} else {
-		if (request->port == PORT_HTTP){
-			bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s:\r\n", request->host);
-			offset += bytes;
-		} else { 
-			bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s:%d\r\n", request->host, request->port);
-			offset += bytes;
+		char host[256] = {'\0'};
+		get_header_value("Host", request->additional_header, host);
+		if (strlen(host) == 0) {
+			if (request->port == PORT_HTTP) {
+				bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s:\r\n", request->host);
+				offset += bytes;
+			} else { 
+				bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s:%d\r\n", request->host, request->port);
+				offset += bytes;
+			}
 		}
 	}
 

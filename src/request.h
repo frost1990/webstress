@@ -56,6 +56,8 @@ typedef struct http_request {
 
 void init_http_request(http_request *request);
 
+void get_header_value(const char *header, const char *src, char *dst);
+
 const char *get_method_name(http_request_method_t method); 
 
 void parse_cli(int argc, char **argv, http_request *request);
