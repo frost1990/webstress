@@ -84,6 +84,11 @@ extern struct http_request myreq;
 extern stats_t net_record;
 extern uint32_t g_status_code_map[1024];
 
+static int compare(const void *a, const void *b)
+{
+	return *(int*)a - *(int*)b;
+}
+
 static const char *get_status_code_info(uint32_t code) 
 {
 	for (int i = 0; i < sizeof(status_code_map) / sizeof(http_status_code_t); i++) {
@@ -92,37 +97,6 @@ static const char *get_status_code_info(uint32_t code)
 		}
 	}
 	return NULL;
-}
-
-static void quicksort(uint32_t *array, int left, int right) {
-	if (left < right) {
-		int key = array[left];
-		/* Partition */
-		size_t low = left;
-		size_t high = right;
-		while (low < high) {
-			/* Low remain stable */
-			while (low < high && array[high] >= key){
-				high--;
-			}
-			if (high > low) {
-				array[low] = array[high];
-			}
-			/* High remain stable */
-			while (low < high && array[low] <= key){
-				low++;
-			}
-			if (low < high) {
-				array[high] = array[low];
-			}
-		}
-		array[low] = key;
-		/* Recursively invoke */
-		quicksort(array, left, low - 1);
-		quicksort(array, low + 1, right);
-	} else {
-		return;
-	}
 }
 
 uint32_t stats_get_interval(struct timeval *start, struct timeval *end) 
@@ -269,7 +243,9 @@ double stats_stddev(stats_t * record)
 
 void stats_sort(stats_t *record) 
 {
-	quicksort(record->data, 0, record->size - 1);
+
+	qsort(record->data,record->size, sizeof(uint32_t), compare);
+	//quicksort(record->data, 0, record->size - 1);
 }
 
 void stats_vector_debug_show(stats_t *record)
