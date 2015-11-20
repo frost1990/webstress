@@ -206,7 +206,7 @@ void compose_request_buffer(http_request* request)
 
 	/* Path, querystring, fragment */
 	if (strlen(request->path) > 0) {
-		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "/%s", request->path);
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s", request->path);
 		offset += bytes;
 	}
 
