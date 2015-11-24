@@ -326,7 +326,6 @@ uint32_t sk_get_host_ipv4(char *host)
 void sk_ipv4_tostr(uint32_t ip, char *ipstr, size_t ipstr_len) 
 {
 	memset(ipstr, 0, ipstr_len);
-	ip = ntohl(ip);
 	size_t offset = 0;
 	for (int i = 0; i < 4; i++) {
 		char store[128];
