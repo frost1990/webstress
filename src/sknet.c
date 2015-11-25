@@ -325,6 +325,7 @@ uint32_t sk_get_host_ipv4(char *host)
 /* Switch unsigned ip to dotted decimal string */
 void sk_ipv4_tostr(uint32_t ip, char *ipstr, size_t ipstr_len) 
 {
+	ip = ntohl(ip);
 	memset(ipstr, 0, ipstr_len);
 	size_t offset = 0;
 	for (int i = 0; i < 4; i++) {
