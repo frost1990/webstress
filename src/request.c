@@ -228,7 +228,7 @@ void compose_request_buffer(http_request* request)
 
 	/* Host */ 
 	if (is_match_pattern(request->host, REGEX_IPV4) != 0 && strcasecmp(request->host, "localhost") != 0) {
-		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s:\r\n", request->host);
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Host: %s\r\n", request->host);
 		offset += bytes;
 	} else {
 		char host[256] = {'\0'};
