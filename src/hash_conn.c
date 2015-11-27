@@ -65,6 +65,7 @@ void hash_conn_add(hash_conn_t *phash_conn, int fd)
 	pconn->recv_buffer = (char *) malloc(RECV_BUFFER_SIZE * sizeof(char));
 	ASSERT_ALLOCATE(pconn->recv_buffer);
 	pconn->offset = 0; 
+	pconn->connected = false; 
 	pconn->capacity = RECV_BUFFER_SIZE; 
 	pconn->latest_snd_time.tv_sec = 0;
 	pconn->latest_snd_time.tv_usec = 0;

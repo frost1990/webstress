@@ -8,7 +8,10 @@
 #include "ev.h"
 #include "screen.h"
 #include "timer.h"
+#include "hash_conn.h"
 #include "networking.h"
+
+extern hash_conn_t ghash_conn;
 
 /* Only support advanced I/O multiplex(i.e. epoll, kevent) now, select(2) and poll(2) are not available for the moment */
 #ifdef __linux__
@@ -115,11 +118,21 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 					}
 				} 
 			} else if (events[i].events & EPOLLOUT) {
-				if (ev_check_so_error(fd) != 0) {
-					close_connection(poller_fd, fd);
-					reconnect(poller_fd, ip, port);
-					continue;
+				conn_t *pconn = hash_conn_get(&ghash_conn, fd);
+				if (pconn == NULL) {
+					SCREEN(SCREEN_RED, stderr, "Fatal error, unable find socket %d's recieve buffer\n");
+					exit(EXIT_FAILURE);
 				}
+				if (pconn->connected == false) {
+					if (ev_check_so_error(fd) != 0) {
+						close_connection(poller_fd, fd);
+						reconnect(poller_fd, ip, port);
+						continue;
+					} else {
+						pconn->connected = true;
+
+					}
+				} 				
 				int ret = send_request(poller_fd, fd);
 				if (ret <= 0) {
 					close_connection(poller_fd, fd);
@@ -254,10 +267,19 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 			}
 
 			if (events[i].filter == EVFILT_WRITE) {
-				if (ev_check_so_error(fd) != 0) {
-					close_connection(poller_fd, fd);
-					reconnect(poller_fd, ip, port);
-					continue;
+				conn_t *pconn = hash_conn_get(&ghash_conn, fd);
+				if (pconn == NULL) {
+					SCREEN(SCREEN_RED, stderr, "Fatal error, unable find socket %d's recieve buffer\n");
+					exit(EXIT_FAILURE);
+				}
+				if (pconn->connected == false) {
+					if (ev_check_so_error(fd) != 0) {
+						close_connection(poller_fd, fd);
+						reconnect(poller_fd, ip, port);
+						continue;
+					} else {
+						pconn->connected = true;
+					}
 				}
 				int ret = send_request(poller_fd, fd);
 				if (ret <= 0) {

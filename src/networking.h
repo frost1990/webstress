@@ -21,6 +21,7 @@ typedef struct conn_t {
 	char *recv_buffer;
 	int offset;
 	int capacity;
+	bool connected;
 	http_parser parser;
 } conn_t;
 
