@@ -9,9 +9,15 @@
 #include "screen.h"
 #include "timer.h"
 #include "hash_conn.h"
+#include "caculate.h"
 #include "networking.h"
 
+/* Globals */
 extern hash_conn_t ghash_conn;
+extern struct timeval start;
+extern struct http_request myreq;
+extern stats_t net_record;
+extern uint32_t g_status_code_map[1024];
 
 /* Only support advanced I/O multiplex(i.e. epoll, kevent) now, select(2) and poll(2) are not available for the moment */
 #ifdef __linux__
@@ -75,6 +81,7 @@ int ev_check_so_error(int fd)
 		int src_port = 0;	
 		sk_getsockname(fd, src_ip, 128, &src_port);
 		if (error == ECONNREFUSED) {
+			stats_summary(&myreq, &net_record);
 			exit(EXIT_FAILURE);
 		}
 	}

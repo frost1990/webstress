@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 #include "request.h"
+#include "caculate.h"
 
 #define STATS_INIT_SIZE (1024)
 #define GB (1024.00 * 1024.00 * 1024.00)
