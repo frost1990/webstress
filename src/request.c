@@ -223,7 +223,7 @@ void compose_request_buffer(http_request* request)
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, " %s\r\n", HTTP_1_1);
 	offset += bytes;
 	/* Start line ends here */
-	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Accept: *\r\n");
+	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Accept: */*\r\n");
 	offset += bytes;
 
 	/* Host */ 
