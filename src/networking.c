@@ -49,7 +49,7 @@ int recieve_response(int poller_fd, int fd)
 	int bytes = 0;
 	conn_t *pconn = hash_conn_get(&ghash_conn, fd);
 	if (pconn == NULL) {
-		SCREEN(SCREEN_RED, stderr, "Fatal error, unable find socket %d's recieve buffer\n");
+		SCREEN(SCREEN_RED, stderr, "Fatal error, unable find socket %d's recieve buffer\n", fd);
 		exit(EXIT_FAILURE);
 	}
 
