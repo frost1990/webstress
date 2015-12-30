@@ -245,7 +245,6 @@ void stats_sort(stats_t *record)
 {
 
 	qsort(record->data,record->size, sizeof(uint32_t), compare);
-	//quicksort(record->data, 0, record->size - 1);
 }
 
 void stats_vector_debug_show(stats_t *record)
