@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <signal.h>
 
+#include <gperftools/profiler.h>
+
 #include "request.h"
 #include "caculate.h"
 #include "screen.h"
@@ -17,6 +19,7 @@ extern hash_conn_t ghash_conn;
 
 int main(int argc, char* argv[]) 
 {
+	ProfilerStart("webstress.prof");	
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGINT, interupt_summary);
 	SCREEN(SCREEN_GREEN, stdout, "Webstress - A simple web benchmarking tool\nCopyright (c) 2015 frost, simple1115@gmail.com. All rights deserved.\n\n");

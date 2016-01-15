@@ -2,6 +2,8 @@
 #include <math.h>
 #include <limits.h>
 
+#include <gperftools/profiler.h>
+
 #include "caculate.h"
 #include "screen.h"	
 #include "exception.h"	
@@ -388,5 +390,6 @@ void interupt_summary(int signal)
 {
 	SCREEN(SCREEN_GREEN, stdout, "\nProgram interupted by %s\n", strsignal(signal));
 	stats_summary(&myreq, &net_record);
+	ProfilerStop();
 	exit(EXIT_SUCCESS);
 }
