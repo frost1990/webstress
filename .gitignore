@@ -37,3 +37,5 @@ unittester
 *.swo
 *.txt
 *.log
+*.pdf
+*.prof
