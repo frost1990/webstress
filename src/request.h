@@ -42,6 +42,7 @@ typedef struct http_request {
 	http_request_method_t method;
 	int http_keep_alive;
 	int connections;
+	int content_length;
 	int duration;
 	/* Unit millisecond */
 	int timeout;

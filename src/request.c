@@ -64,6 +64,7 @@ void init_http_request(http_request *request)
 {
 	request->method = GET;
 	request->connections = 1;
+	request->content_length = 0;
 	request->duration = 0;
 	request->timeout = 0;
 	request->http_keep_alive = HTTP_KEEP_ALIVE;
@@ -101,9 +102,10 @@ void parse_cli(int argc, char **argv, http_request *request) {
 				SCREEN(SCREEN_DARK_GREEN, stdout, "%d\n", request->connections);
 				break;
 			case 'd':
-				request->method= POST; 
+				request->method = POST; 
+				request->content_length= strlen(optarg); 
+				strncpy(request->content_type, "application/x-www-form-urlencoded", 256);
 				strncpy(request->bodydata, optarg, 1024);
-				strncpy(request->content_type, "application/x-www-form-urlencoded", 1024);
 				break;
 			case 'f':
 				request->pipelining = true;
@@ -259,6 +261,11 @@ void compose_request_buffer(http_request* request)
 		offset += bytes;
 	}
 
+	if (request->content_length != 0) {
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Content-Length: %d\r\n", request->content_length);
+		offset += bytes;
+	}
+
 	/* Header ends here */
 	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
 	offset += bytes;
@@ -267,11 +274,10 @@ void compose_request_buffer(http_request* request)
 	SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
 
 	/* Body starts */
-	if (strlen(request->bodydata) > 0) {
+	if (strlen(request->bodydata) != 0) {
 		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s", request->bodydata);
 		offset += bytes;
-	}
-
+	} 
 	request->send_buffer = buffer;
 }
 
