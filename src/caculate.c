@@ -353,7 +353,7 @@ void stats_summary(http_request *request, stats_t *record)
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu requests sent, %4.2f requests/sec\n", record->total_requests, record->total_requests / seconds);
 	SCREEN(SCREEN_DARK_GREEN, stdout, "%lu responses recieved, %4.2f responses/sec\n", record->total_responses, record->total_responses / seconds);
 	double finished = (record->total_responses) ? ((double) record->total_responses/ (double) record->total_requests) : 0;
-	SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percent: %4.2f\%%\n\n", 100 * finished);
+	SCREEN(SCREEN_DARK_GREEN, stdout, "Finished tasks percentage: %4.2f\%%\n\n", 100 * finished);
 
 	stats_traffic(record, seconds);
 
