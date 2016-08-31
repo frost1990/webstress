@@ -115,9 +115,9 @@ int send_request(int poller_fd, int fd)
 
 	int offset = 0;
 	char *send_buffer = myreq.send_buffer;
-	int len = strlen(send_buffer);
+	int len = myreq.total_length;
 	while (true) {   
-		int ret = send(fd, send_buffer + offset, strlen(send_buffer) - offset, 0);
+		int ret = send(fd, send_buffer + offset, myreq.total_length - offset, 0);
 		if (ret < 0) {   
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
 				break;	

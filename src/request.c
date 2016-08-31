@@ -73,6 +73,7 @@ void init_http_request(http_request *request)
 	request->http_keep_alive = HTTP_KEEP_ALIVE;
 	request->ip = 0;
 	request->port = PORT_HTTP;
+	request->total_length = 0;
 	request->pipelining = false;
 	request->additional_header = NULL;
 	request->file_upload = NULL;
@@ -303,6 +304,8 @@ void compose_request_buffer(http_request* request)
 			exit(EXIT_FAILURE);
 		}
 		offset += bytes;
+		request->total_length = offset;
+		request->send_buffer = buffer;
 		return;
 	}
 
@@ -312,6 +315,7 @@ void compose_request_buffer(http_request* request)
 	} 
 
 	request->send_buffer = buffer;
+	request->total_length = offset;
 }
 
 void free_request_buffer(const http_request *request) 
