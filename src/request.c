@@ -3,6 +3,9 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <ctype.h>
+#include <sys/stat.h>   
+#include <unistd.h>
+#include <errno.h>
 
 #include "request.h"
 #include "http_parser.h"
@@ -72,6 +75,7 @@ void init_http_request(http_request *request)
 	request->port = PORT_HTTP;
 	request->pipelining = false;
 	request->additional_header = NULL;
+	request->file_upload = NULL;
 	request->send_buffer = NULL;
 	memset(request->scheme, 0, 16);
 	memset(request->host, 0, 256);
@@ -79,13 +83,23 @@ void init_http_request(http_request *request)
 	memset(request->querystring, 0, 1024);
 	memset(request->fragment, 0, 256);
 	memset(request->content_type, 0, 256);
-	memset(request->bodydata, 0, 1024);
+	//memset(request->bodydata, 0, 1024);
 }
 
 void parse_cli(int argc, char **argv, http_request *request) {
 	int ch;                     
-	while ((ch = getopt(argc, argv, "c:d:fH:hm:p:t:v")) != -1) {
+	while ((ch = getopt(argc, argv, "b:c:d:fH:hm:p:t:v")) != -1) {
 		switch(ch) {
+			case 'b':
+				request->file_upload= optarg;
+				struct stat file;
+				if (stat(request->file_upload, &file) != 0) {
+					SCREEN(SCREEN_RED, stderr, "Cannot stat your input file %s: %s\n", request->file_upload, strerror(errno));
+					exit(EXIT_FAILURE);
+				}	
+				request->content_length = file.st_size;
+				strncpy(request->content_type, "application/octet-stream", 256);
+				break;
 			case 'c':
 				if (atoi(optarg) < 1) {
 					SCREEN(SCREEN_RED, stderr, "Connection number must be equal to or greater than one.\n");
@@ -103,12 +117,12 @@ void parse_cli(int argc, char **argv, http_request *request) {
 				break;
 			case 'd':
 				request->method = POST; 
-				request->content_length= strlen(optarg); 
+				request->content_length = strlen(optarg); 
 				strncpy(request->content_type, "application/x-www-form-urlencoded", 256);
 				strncpy(request->bodydata, optarg, 1024);
 				break;
 			case 'f':
-				request->pipelining = true;
+				request->file_upload = optarg;
 				break;
 			case 'H':
 				request->additional_header = optarg;
@@ -274,10 +288,29 @@ void compose_request_buffer(http_request* request)
 	SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
 
 	/* Body starts */
+	if (request->file_upload != NULL) {
+		buffer = (char *) realloc(buffer, (request->content_length + REQUEST_BUFFER_SIZE) * sizeof(char));
+		ASSERT_ALLOCATE(buffer);
+		int fd = open(request->file_upload, O_RDONLY);
+		if (fd < 0) {
+			perror("open(2)");
+			exit(EXIT_FAILURE);
+		}
+
+		bytes = read(fd, buffer + offset, request->content_length);
+		if (bytes != request->content_length) {
+			SCREEN(SCREEN_RED, stderr, "Cannot read your input file: %s.\n", request->file_upload);
+			exit(EXIT_FAILURE);
+		}
+		offset += bytes;
+		return;
+	}
+
 	if (strlen(request->bodydata) != 0) {
 		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s", request->bodydata);
 		offset += bytes;
 	} 
+
 	request->send_buffer = buffer;
 }
 

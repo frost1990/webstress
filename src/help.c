@@ -7,6 +7,7 @@
 const char *help_message = 
 "\nUSAGE: webstress [options] <url>\n"
 "\nOPTIONS:\n"
+"	-b			Specify the file you want to update, Content-Type will be application/octet-stream\n"
 "	-c			Concurrent tcp connections\n"
 "	-d			Add post application/x-www-form-urlencoded data\n"
 "	-f			Run in pipelining mode, will send as many requests as possible,	some summary information are not available\n"

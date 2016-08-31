@@ -51,6 +51,7 @@ typedef struct http_request {
 
 	bool pipelining;
 
+	char *file_upload;
 	char *additional_header;
 	char *send_buffer;
 } http_request;
