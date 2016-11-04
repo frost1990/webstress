@@ -73,4 +73,6 @@ void stats_traffic(stats_t *record, double seconds);
 
 void interupt_summary(int signal);
 
+void finally_summary(); 
+
 #endif 

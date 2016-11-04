@@ -14,12 +14,14 @@
 /* When RECV_NEXT is returned, flush the buffer and notify the writable event to send next http request */
 #define RECV_NEXT -2
 #define SEND_ERROR -1
+#define SEND_EAGAIN -2
 
 typedef struct conn_t {
 	struct timeval latest_snd_time; 
 	int fd;
 	char *recv_buffer;
 	int offset;
+	int sendoffset;
 	int capacity;
 	bool connected;
 	http_parser parser;

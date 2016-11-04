@@ -12,7 +12,7 @@
 #define HTTP_KEEP_ALIVE 1
 #define HTTP_NO_KEEP_ALIVE 2
 
-#define REQUEST_BUFFER_SIZE 4096
+#define REQUEST_BUFFER_SIZE (1024 * 1024 * 1024)
 
 typedef enum {
 	GET = 100,
@@ -37,12 +37,13 @@ typedef struct http_request {
 	char fragment[256];
 	char userinfo[256];
 	char content_type[256];
-	char bodydata[1024];
+	char bodydata[4096];
 
 	http_request_method_t method;
 	int http_keep_alive;
 	int connections;
 	int content_length;
+	int file_size;
 	int duration;
 	/* Unit millisecond */
 	int timeout;
