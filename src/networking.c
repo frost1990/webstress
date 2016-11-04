@@ -92,6 +92,7 @@ int recieve_response(int poller_fd, int fd)
 
 	if (nparsed > 0) {
 		if (parser.http_errno == HPE_CB_message_complete) {
+			//SCREEN(SCREEN_YELLOW, stderr, "\n%s\n", pconn->recv_buffer + pconn->offset);
 			memset(pconn->recv_buffer, 0, total_bytes);
 			pconn->offset = 0;
 			/* Tell the ev_loop_poller to notify writable events and send next request */
@@ -113,14 +114,13 @@ int send_request(int poller_fd, int fd)
 		exit(EXIT_FAILURE);
 	}
 
-	int offset = 0;
 	char *send_buffer = myreq.send_buffer;
-	int len = myreq.total_length;
+	int len = myreq.total_length - pconn->sendoffset;
 	while (true) {   
-		int ret = send(fd, send_buffer + offset, myreq.total_length - offset, 0);
+		int ret = send(fd, send_buffer + pconn->sendoffset, myreq.total_length - pconn->sendoffset, 0);
 		if (ret < 0) {   
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				break;	
+				return SEND_EAGAIN;
 			} else if (errno == EINTR) {
 				/* Interupted by a signal */
 				continue;
@@ -130,7 +130,7 @@ int send_request(int poller_fd, int fd)
 			}
 		}  
 		len -= ret;
-		offset += ret;
+		pconn->sendoffset += ret;
 		/* All data sent to socket's sending buffer */
 		if (len <= 0) {   
 			break;
@@ -138,10 +138,12 @@ int send_request(int poller_fd, int fd)
 	}
 
 	net_record.total_requests++;
-	net_record.snd_bytes += offset;
+	net_record.snd_bytes += pconn->sendoffset;
 	/* Record send time */
 	gettimeofday(&(pconn->latest_snd_time), NULL);
-	return offset;
+	int ret = pconn->sendoffset;
+	pconn->sendoffset = 0;
+	return ret;
 }
 
 int close_connection(int poller_fd, int fd)

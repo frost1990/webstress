@@ -117,7 +117,7 @@ void stats_init(stats_t* record)
 	record->rcv_bytes = 0; 
 	record->max = 0; 
 	record->min = INT_MAX - 1; 
-
+	record->avg = 0.0; 
 
 	memset(record->data, 0, record->capacity);
 }
@@ -144,7 +144,7 @@ void stats_update(stats_t* record, uint32_t element)
 		record->min = element;
 	}
 
-	record->avg = (record->avg + (double)element) / 2;
+	record->avg = ((record->avg) * (record->size - 1.0)  + element)  / (double) (record->size);
 }
 
 void stats_resize(stats_t* record) 
@@ -387,6 +387,12 @@ void stats_summary(http_request *request, stats_t *record)
 void interupt_summary(int signal) 
 {
 	SCREEN(SCREEN_GREEN, stdout, "\nProgram interupted by %s\n", strsignal(signal));
+	stats_summary(&myreq, &net_record);
+	exit(EXIT_SUCCESS);
+}
+
+void finally_summary() 
+{
 	stats_summary(&myreq, &net_record);
 	exit(EXIT_SUCCESS);
 }

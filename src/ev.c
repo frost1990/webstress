@@ -19,6 +19,8 @@ extern struct http_request myreq;
 extern stats_t net_record;
 extern uint32_t g_status_code_map[1024];
 
+int timerfd = -1;
+
 /* Only support advanced I/O multiplex(i.e. epoll, kevent) now, select(2) and poll(2) are not available for the moment */
 #ifdef __linux__
 #include <sys/epoll.h>
@@ -46,7 +48,7 @@ int ev_modify_event(int poller_fd, int fd, int active_type)
 	if (active_type == EVENT_READ) {
 		event.events = EPOLLIN | EPOLLET | EPOLLRDHUP; 
 	} else if (active_type == EVENT_WRITE) {
-		event.events = EPOLLIN | EPOLLET | EPOLLOUT | EPOLLRDHUP; 
+		event.events = EPOLLET | EPOLLIN | EPOLLOUT | EPOLLRDHUP; 
 	}
 	return epoll_ctl(poller_fd, EPOLL_CTL_MOD, fd, &event);
 }
@@ -57,8 +59,7 @@ int ev_del_event(int poller_fd, int fd) {
 }
 
 /* Create a timer fd to poller */
-int ev_add_timer(int poller_fd, int timerfd, int sec, int msec, bool once_only, 
-	int (*callback) (void *), void *args) 
+int ev_add_timer(int poller_fd, int timerfd, int sec, int msec, bool once_only) 
 {
 	timer_set_interval(timerfd, sec, msec, once_only);
 
@@ -90,6 +91,10 @@ int ev_check_so_error(int fd)
 
 /* Start a event loop */
 void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
+	if (timerfd > 0) {
+		ev_add_timer(poller_fd, timerfd, myreq.duration, 0, true);
+	}
+
 	struct epoll_event events[MAX_EVENT_NO];
 	while (true) {
 		int number = epoll_wait(poller_fd, events, MAX_EVENT_NO, timeout_usec); 
@@ -113,6 +118,11 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 				reconnect(poller_fd, ip, port);
 				continue;
 			} else if (events[i].events & EPOLLIN) {   
+				if (fd == timerfd) {
+					SCREEN(SCREEN_YELLOW, stdout, "Duration expires, benchmark test terminates now\n");
+					finally_summary();
+				} 
+
 				int	ret = recieve_response(poller_fd, fd);
 				if (ret <= 0) {
 					if (ret == RECV_NEXT) {
@@ -142,9 +152,14 @@ void ev_run_loop(int poller_fd, int timeout_usec, uint32_t ip, int port) {
 				} 				
 				int ret = send_request(poller_fd, fd);
 				if (ret <= 0) {
-					close_connection(poller_fd, fd);
-					reconnect(poller_fd, ip, port);
-					continue;
+					if (ret != SEND_EAGAIN) {
+						close_connection(poller_fd, fd);
+						reconnect(poller_fd, ip, port);
+						continue;
+					} else {
+						ev_modify_event(poller_fd, fd, EVENT_WRITE); 
+						continue;
+					}
 				}
 				ev_modify_event(poller_fd, fd, EVENT_READ); 
 			} 		

@@ -6,6 +6,7 @@
 #include <sys/stat.h>   
 #include <unistd.h>
 #include <errno.h>
+#include <libgen.h>
 
 #include "request.h"
 #include "http_parser.h"
@@ -16,6 +17,11 @@
 #include "url.h"
 #include "screen.h"
 #include "exception.h"
+#include "timer.h"
+
+extern int timerfd; 
+
+const char *boundary="--274de482-9c13-11e6-89ea--";
 
 /* The array must be correctly ordered */
 static struct method_map method_name_map [] = {
@@ -69,6 +75,7 @@ void init_http_request(http_request *request)
 	request->connections = 1;
 	request->content_length = 0;
 	request->duration = 0;
+	request->file_size = 0;
 	request->timeout = 0;
 	request->http_keep_alive = HTTP_KEEP_ALIVE;
 	request->ip = 0;
@@ -84,7 +91,7 @@ void init_http_request(http_request *request)
 	memset(request->querystring, 0, 1024);
 	memset(request->fragment, 0, 256);
 	memset(request->content_type, 0, 256);
-	memset(request->bodydata, 0, 1024);
+	memset(request->bodydata, 0, 4096);
 }
 
 void parse_cli(int argc, char **argv, http_request *request) {
@@ -92,13 +99,15 @@ void parse_cli(int argc, char **argv, http_request *request) {
 	while ((ch = getopt(argc, argv, "b:c:d:fH:hm:p:t:v")) != -1) {
 		switch(ch) {
 			case 'b':
-				request->file_upload= optarg;
+				request->file_upload = optarg;
 				struct stat file;
 				if (stat(request->file_upload, &file) != 0) {
 					SCREEN(SCREEN_RED, stderr, "Cannot stat your input file %s: %s\n", request->file_upload, strerror(errno));
 					exit(EXIT_FAILURE);
 				}	
+				request->method = POST; 
 				request->content_length = file.st_size;
+				request->file_size = file.st_size;
 				strncpy(request->content_type, "application/octet-stream", 256);
 				break;
 			case 'c':
@@ -120,7 +129,7 @@ void parse_cli(int argc, char **argv, http_request *request) {
 				request->method = POST; 
 				request->content_length = strlen(optarg); 
 				strncpy(request->content_type, "application/x-www-form-urlencoded", 256);
-				strncpy(request->bodydata, optarg, 1024);
+				memcpy(request->bodydata, optarg, 4096);
 				break;
 			case 'f':
 				request->file_upload = optarg;
@@ -148,10 +157,21 @@ void parse_cli(int argc, char **argv, http_request *request) {
 				break;
 			case 't':
 				if (atoi(optarg) < 1) {
-					printf("Request-response time out must be equal to or greater than one millisecond.\n");
+					SCREEN(SCREEN_RED, stderr, "Invalid duration seconds.\n");
+					exit(EXIT_FAILURE);	
+				} 
+				request->duration = atoi(optarg);
+				timerfd = timer_create_fd();
+				if (timerfd < 0) {
+					SCREEN(SCREEN_RED, stderr, "Create timerfd failed: %s\n", strerror(errno));
 					exit(EXIT_FAILURE);	
 				}
-				request->timeout = atoi(optarg);
+				if (timer_set_interval(timerfd, request->duration, 0, true) < 0) {
+					SCREEN(SCREEN_RED, stderr, "Set benchmark duration failed: %s\n", strerror(errno));
+					exit(EXIT_FAILURE);	
+				}
+				SCREEN(SCREEN_YELLOW, stdout, "Duration:\t\t");
+				SCREEN(SCREEN_DARK_GREEN, stdout, "%d seconds\n", request->duration);
 				break;
 			case 'v':
 				show_version();
@@ -211,10 +231,9 @@ int parse_opt(int argc, char **argv, http_request *request)
 
 void compose_request_buffer(http_request* request)
 {
-	char *buffer = malloc(REQUEST_BUFFER_SIZE * sizeof(char));
+	char *buffer = calloc(1, REQUEST_BUFFER_SIZE * sizeof(char));
 	ASSERT_ALLOCATE(buffer);
 
-	memset(buffer, 0, REQUEST_BUFFER_SIZE);
 	size_t offset = 0;
 	
 	/* Start line */
@@ -261,13 +280,16 @@ void compose_request_buffer(http_request* request)
 		}
 	}
 
-	if (strlen(request->content_type) > 0) {
-		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Content-Type: %s\r\n", request->content_type);
-		offset += bytes;
-	}
-
 	if (request->http_keep_alive == HTTP_KEEP_ALIVE) {
 		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Connection: keep-alive\r\n");
+		offset += bytes;
+	}
+	
+	if (strlen(request->bodydata) != 0 && request->file_upload != NULL) {
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Content-Type: multipart/form-data; boundary=%s\r\n", boundary);
+		offset += bytes;
+	} else if (strlen(request->content_type) > 0) {
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Content-Type: %s\r\n", request->content_type);
 		offset += bytes;
 	}
 
@@ -276,46 +298,80 @@ void compose_request_buffer(http_request* request)
 		offset += bytes;
 	}
 
-	if (request->content_length != 0) {
+	if (!(strlen(request->bodydata) != 0 && request->file_upload != NULL)) {
 		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Content-Length: %d\r\n", request->content_length);
 		offset += bytes;
-	}
 
-	/* Header ends here */
-	bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
-	offset += bytes;
+		/* Header ends here */
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
+		offset += bytes;
 
-	SCREEN(SCREEN_BLUE, stdout, "Http request header:\n");
-	SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
+		SCREEN(SCREEN_BLUE, stdout, "Http request header:\n");
+		SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
 
-	/* Body starts */
-	if (request->file_upload != NULL) {
-		buffer = (char *) realloc(buffer, (request->content_length + REQUEST_BUFFER_SIZE) * sizeof(char));
-		ASSERT_ALLOCATE(buffer);
+		if (request->file_upload != NULL) {
+			int fd = open(request->file_upload, O_RDONLY);
+			if (fd < 0) {
+				perror("open(2)");
+				exit(EXIT_FAILURE);
+			}
+
+			bytes = read(fd, buffer + offset, request->content_length);
+			if (bytes != request->content_length) {
+				SCREEN(SCREEN_RED, stderr, "Cannot read your input file: %s.\n", request->file_upload);
+				exit(EXIT_FAILURE);
+			}
+			offset += bytes;
+		} else if (strlen(request->bodydata) != 0) {
+			bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s", request->bodydata);
+			offset += bytes;
+		} 
+
+	} else {
+		/* Two multi-part */
+		/* We need to caculate Content-Length again */
+		char *extrabuffer = (char *) calloc(1, (REQUEST_BUFFER_SIZE) * sizeof(char));
+		ASSERT_ALLOCATE(extrabuffer);
+
+		int bodyoffset = 0;
+		bytes = snprintf(extrabuffer + bodyoffset, REQUEST_BUFFER_SIZE - bodyoffset, "%s\r\nContent-Disposition: form-data; name=\"img\", filename=\"%s\"\r\nContent-Type: image/jpeg\r\n\r\n", 
+				boundary, basename(request->file_upload));
+		bodyoffset += bytes;
 		int fd = open(request->file_upload, O_RDONLY);
 		if (fd < 0) {
 			perror("open(2)");
 			exit(EXIT_FAILURE);
 		}
 
-		bytes = read(fd, buffer + offset, request->content_length);
-		if (bytes != request->content_length) {
+		bytes = read(fd, extrabuffer + bodyoffset, request->file_size);
+		if (bytes != request->file_size) {
 			SCREEN(SCREEN_RED, stderr, "Cannot read your input file: %s.\n", request->file_upload);
 			exit(EXIT_FAILURE);
 		}
-		offset += bytes;
-		request->total_length = offset;
-		request->send_buffer = buffer;
-		return;
-	}
+		bodyoffset += request->file_size;
 
-	if (strlen(request->bodydata) != 0) {
-		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "%s", request->bodydata);
+		bytes = snprintf(extrabuffer + bodyoffset, REQUEST_BUFFER_SIZE - bodyoffset, "\r\n%s\r\nContent-Disposition: form-data; name=\"json\"\r\n\r\n%s\r\n%s\r\n",  boundary, request->bodydata, boundary); 
+		bodyoffset += bytes;
+
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "Content-Length: %d\r\n", bodyoffset);
 		offset += bytes;
+
+		/* Header ends here */
+		bytes = snprintf(buffer + offset, REQUEST_BUFFER_SIZE - offset, "\r\n");
+		offset += bytes;
+
+		SCREEN(SCREEN_BLUE, stdout, "Http request header:\n");
+		SCREEN(SCREEN_GREEN, stdout, "%s", buffer);
+
+		memmove(buffer + offset, extrabuffer, bodyoffset);
+		offset += bodyoffset;
 	} 
+
 
 	request->send_buffer = buffer;
 	request->total_length = offset;
+
+	return;
 }
 
 void free_request_buffer(const http_request *request) 
